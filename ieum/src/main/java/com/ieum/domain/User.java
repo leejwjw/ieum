@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-
     private String USERNAME;
     private String NICK_NAME;
     private String PASSWORD;
@@ -29,4 +28,5 @@ public class User {
 
     @Builder.Default
     private LocalDateTime REG_DATE = LocalDateTime.now();
+
 }
