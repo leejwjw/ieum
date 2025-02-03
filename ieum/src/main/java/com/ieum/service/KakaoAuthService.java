@@ -1,6 +1,7 @@
 package com.ieum.service;
 
 import com.ieum.domain.User;
+import com.ieum.domain.UserStatus;
 import com.ieum.dto.UserDTO;
 import com.ieum.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -96,7 +97,7 @@ public class KakaoAuthService {
         User user = User.builder()
                 .USERNAME(email)
                 .NICK_NAME(nickName)
-                .STATUS(null)
+                .STATUS(UserStatus.ACTIVE)
                 .build();
         return user;
     }
