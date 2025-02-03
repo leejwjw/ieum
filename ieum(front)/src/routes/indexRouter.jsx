@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { useRoutes } from "react-router-dom";
 import RoomListPage from "../pages/room/RoomListPage";
 import RoomComponent from "../components/room/RoomComponent";
-import Home from "../pages/room/Home";
+import Home from "../pages/main/Home";
 // import roomRouter from "./roomRouter";
 
 const Router = () => {
