@@ -30,21 +30,27 @@ public class KakaoAuthService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO getKakaoUserInfo(String accessToken) {
-        String email = getKakaoUser(accessToken);
+    public UserDTO getKakaoUserInfo(String accessToken) throws Exception {
+        try {
+            String email = getKakaoUser(accessToken);
 
-        Optional<User> findUser = userRepository.findById(email);
-        // 기존 회원일 경우
-        if (findUser.isPresent()) {
-            UserDTO userDTO = entityToDTO(findUser.get());
-            return userDTO;
+            Optional<User> findUser = userRepository.findById(email);
+            // 기존 회원일 경우
+            if (findUser.isPresent()) {
+                UserDTO userDTO = entityToDTO(findUser.get());
+                return userDTO;
+            }
+            // 기존 회원이 아닐 경우
+            User socialUser = makeSocialUser(email);
+            userRepository.save(socialUser);
+            UserDTO socialUserDTO = entityToDTO(socialUser);
+
+            return socialUserDTO;
+        } catch (Exception e) {
+            // 예외 처리, 로그 찍기
+            System.err.println("카카오 API 호출 중 오류 발생: " + e.getMessage());
+            throw new Exception("카카오 API 호출 중 오류 발생", e);
         }
-        // 기존 회원이 아닐 경우
-        User socialUser =  makeSocialUser(email);
-        userRepository.save(socialUser);
-        UserDTO socialUserDTO = entityToDTO(socialUser);
-
-        return socialUserDTO;
     }
 
 
@@ -82,7 +88,7 @@ public class KakaoAuthService {
                 User.getNICK_NAME(),
                 User.getKEYWORD(),
                 User.getNATION_NAME(),
-                User.isIS_PUBLIC(),
+                User.getIS_PUBLIC(),
                 User.getPHOTO(),
                 User.getREG_DATE(),
                 String.valueOf(User.getSTATUS())
@@ -97,6 +103,7 @@ public class KakaoAuthService {
         User user = User.builder()
                 .USERNAME(email)
                 .NICK_NAME(nickName)
+                .IS_PUBLIC(Boolean.TRUE)
                 .STATUS(UserStatus.ACTIVE)
                 .build();
         return user;

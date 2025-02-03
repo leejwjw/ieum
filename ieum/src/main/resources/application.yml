@@ -38,7 +38,7 @@ logging:
   level:
     org.hibernate.sql: debug
     org.hibernate.type: trace
-    org.springframework.security.web: trace
+    org.springframework.security.web: debug
 
 # jsessionid ????? ??X
 server:

@@ -21,12 +21,12 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private UserStatus STATUS;
-
-    private boolean IS_PUBLIC;
+    private Boolean IS_PUBLIC;
     private String PHOTO;
     private String KEYWORD;
 
     @Builder.Default
     private LocalDateTime REG_DATE = LocalDateTime.now();
+
 
 }

@@ -4,6 +4,7 @@ import com.ieum.dto.UserDTO;
 import com.ieum.service.KakaoAuthService;
 import com.ieum.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 @RequestMapping("/api/auth")
 public class SocialController {
 
@@ -31,7 +33,6 @@ public class SocialController {
 
         try {
             // 카카오 사용자 정보 요청
-//            Map<String, Object> userInfo = kakaoAuthService.getKakaoUserInfo(accessToken);
             UserDTO userDTO  = kakaoAuthService.getKakaoUserInfo(accessToken);
             Map<String, Object> claims = userDTO.getClaims();
             String jwtAccessToken = JWTUtil.generateToken(claims,10);

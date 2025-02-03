@@ -4,9 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -28,9 +27,16 @@ public class CustomSecurityConfig {
         http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                        .requestMatchers("/home", "/api/auth/*", "/api/auth/getkakaoUser", "/js/**", "/img/**", "/static/**").permitAll()  // /static 경로도 허용
+                .requestMatchers("/home","/api/auth/*", "/api/auth/getkakaoUser","/img/**").permitAll()
                         .anyRequest().authenticated()
                 );
+        http://localhost:8080/api/auth/getkakaoUser
+
+//        http.formLogin(login -> {
+//            login.loginPage("/api/member/login");
+//            login.successHandler(new APILoginSuccessHandler());
+//            login.failureHandler(new APILoginFailureHandler());
+//        });
 
 
         return http.build();
@@ -39,9 +45,10 @@ public class CustomSecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS","HEAD"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowCredentials(true);
+        configuration.setAllowedHeaders(Arrays.asList("Authorization", "Cache-Control", "Content-Type"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
