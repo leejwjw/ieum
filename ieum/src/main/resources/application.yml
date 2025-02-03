@@ -22,6 +22,15 @@ spring:
       max-request-size: 30MB
       max-file-size: 10MB
 
+# 케밥 표기법으로 작성하는 이유
+# 다른 api와의 호환성, spring boot의 설정 파일의 기본값
+kakao:
+  auth:
+    rest-api-key: "44fb6350a18142052af362d26c9f5207"
+    redirect-uri: "http://localhost:8080/api/kakaoLogin"
+    auth-code-path: "https://kauth.kakao.com/oauth/authorize"
+    access-token-url: "https://kauth.kakao.com/oauth/token"
+
 ieum.upload.path: upload
 
 # log

@@ -14,8 +14,6 @@ import java.time.LocalDateTime;
 public class Room {
 
 
-
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ROOM_ID;
