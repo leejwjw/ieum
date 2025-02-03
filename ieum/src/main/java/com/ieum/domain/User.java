@@ -14,23 +14,19 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long USER_ID;
 
-    private Long LANG_ID;
-    private Long NATION_ID;
-    private String NAME;
-    private String EMAIL;
+    private String USERNAME;
+    private String NICK_NAME;
     private String PASSWORD;
-    private boolean IS_KAKAO;
+    private String NATION_NAME;
 
     @Enumerated(EnumType.STRING)
-    private UserStatus USER_STATUS;
+    private UserStatus STATUS;
 
-    private boolean IS_HIDDEN;
+    private boolean IS_PUBLIC;
     private String PHOTO;
     private String KEYWORD;
 
     @Builder.Default
-    private LocalDateTime REG_DATE = LocalDateTime.now(); // 자동으로 현재 시간 할당
+    private LocalDateTime REG_DATE = LocalDateTime.now();
 }
