@@ -46,12 +46,11 @@ public class UserRepositoryTests {
 
     public void testSave() {
         User user = User.builder()
-                .EMAIL("junwooTest@nate.com")
+                .USERNAME("junwooTest@nate.com")
                 .PASSWORD("111")
-                .NATION_ID(8L)
-                .NAME("준테스트2")
-                .IS_HIDDEN(false)
-                .USER_STATUS(UserStatus.ACTIVE)
+                .NICK_NAME("준테스트2")
+                .IS_PUBLIC(false)
+                .STATUS(UserStatus.ACTIVE)
                 .build();
         userRepository.save(user);
     }
