@@ -5,6 +5,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -26,7 +28,7 @@ public class CustomSecurityConfig {
         http.csrf(csrf -> csrf.disable());
 
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
-                .requestMatchers("/home","/api/auth/*", "/api/auth/getkakaoUser", "/js/*", "/img/*").permitAll()
+                        .requestMatchers("/home", "/api/auth/*", "/api/auth/getkakaoUser", "/js/**", "/img/**", "/static/**").permitAll()  // /static 경로도 허용
                         .anyRequest().authenticated()
                 );
 
