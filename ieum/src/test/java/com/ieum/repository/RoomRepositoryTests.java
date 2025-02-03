@@ -44,11 +44,10 @@ public class RoomRepositoryTests {
     @Test
     public void testSave() {
         Room room = Room.builder()
-                .RC_ID(1L)
                 .NAME("테스트 방")
                 .CONTENT("CONTENT !!")
                 .TYPE(RoomType.PRIVATE)
-                .ROOM_LIMIT(10L)
+                .LIMIT(10L)
                 .LAT("37.5665")
                 .LNG("126.9780")
                 .KEYWORD("테스트")

@@ -2,6 +2,8 @@ package com.ieum.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.web.socket.TextMessage;
+import org.springframework.web.socket.WebSocketSession;
 
 import java.time.LocalDateTime;
 
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 public class Room {
 
@@ -18,7 +21,6 @@ public class Room {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long ROOM_ID;
 
-    private Long RC_ID;
     private String NAME;
     private String CONTENT;
     @Enumerated(EnumType.STRING)
@@ -28,5 +30,6 @@ public class Room {
     private String LNG;
     private LocalDateTime REG_DATE;
     private String KEYWORD;
+
 
 }

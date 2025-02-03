@@ -1,25 +1,21 @@
 package com.ieum.service;
 
 import com.ieum.domain.User;
-import com.ieum.domain.UserStatus;
 import com.ieum.dto.UserDTO;
 import com.ieum.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.management.relation.Role;
 import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -78,17 +74,17 @@ public class KakaoAuthService {
         return kakaoAccount.get("email");
     }
 
-    // User 엔티티 -> MeDTO 변환 default 메서드
+    // User 엔티티 -> UserDTO 변환 default 메서드
     public UserDTO entityToDTO(User User) {
         UserDTO UserDTO = new UserDTO(
                 User.getUSERNAME(),
-                User.getNICKNAME(),
+                User.getNICK_NAME(),
                 User.getKEYWORD(),
                 User.getNATION_NAME(),
-                User.getIS_PUBLIC(),
-                User.getPHOTO_PATH(),
+                User.isIS_PUBLIC(),
+                User.getPHOTO(),
                 User.getREG_DATE(),
-                User.getSTATUS()
+                String.valueOf(User.getSTATUS())
         );
         return UserDTO;
     }
@@ -99,7 +95,7 @@ public class KakaoAuthService {
         String nickName = "Social User"; // 임의의 닉네임 생성
         User user = User.builder()
                 .USERNAME(email)
-                .NICKNAME(nickName)
+                .NICK_NAME(nickName)
                 .STATUS(null)
                 .build();
         return user;
