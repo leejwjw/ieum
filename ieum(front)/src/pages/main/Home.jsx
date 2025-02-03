@@ -76,7 +76,7 @@ const Home = () => {
   return (
     <div>
       <a onClick={redirectToKakaoLogin}>
-        <img src="/img/kakao_login.png" alt="카카오 로그인 버튼" />
+        <img src="/kakao_login.png" alt="카카오 로그인 버튼" />
       </a>
     </div>
   );
