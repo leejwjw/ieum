@@ -33,9 +33,8 @@ public class KakaoAuthService {
         log.info("getKakaoUser - email : {}", email);
 
         Optional<User> findMember = userRepository.findById(email);
-        // 기존 회원이다 -> DB에서 찾은 User를 UserDTO로 변환해 리턴
+        // 값이 존재할 경우 = 기존 회원
         if(findMember.isPresent()) {
-            // 기존 회원인 경우
             User user = findMember.get();
 
             // 최초 로그인 시 isUser 값을 업데이트 (새로운 회원에서 기존 회원으로 전환)
@@ -45,7 +44,10 @@ public class KakaoAuthService {
             }
 
             // DTO로 변환하여 반환
-            return entityToDTO(user);
+            UserDTO userDTO = entityToDTO(user);
+
+
+            return userDTO;
         }
         // 기존 회원이 아니다 -> 임시 닉네임으로 User 엔티티 생성해 DB에 저장 & DTO리턴
         User socialUser = makeSocialUser(email);
@@ -95,19 +97,19 @@ public class KakaoAuthService {
     }
 
     // User 엔티티 -> UserDTO 변환 default 메서드
-    public UserDTO entityToDTO(User User) {
-        UserDTO UserDTO = new UserDTO(
-                User.getUSERNAME(),
-                User.getNICK_NAME(),
-                User.getKEYWORD(),
-                User.getNATION_NAME(),
-                User.getIS_PUBLIC(),
-                User.getIS_USER(),
-                User.getPHOTO(),
-                User.getREG_DATE(),
-                String.valueOf(User.getSTATUS())
+    public UserDTO entityToDTO(User user) {
+        UserDTO userDTO = new UserDTO(
+                user.getUSERNAME(),
+                user.getNICK_NAME(),
+                user.getKEYWORD(),
+                user.getNATION_NAME(),
+                user.getIS_PUBLIC(),
+                user.getIS_USER(),
+                user.getPHOTO_PATH(),
+                user.getREG_DATE(),
+                String.valueOf(user.getSTATUS())
         );
-        return UserDTO;
+        return userDTO;
     }
 
     public boolean isUserExists(String email) {
