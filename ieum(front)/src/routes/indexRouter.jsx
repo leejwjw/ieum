@@ -4,7 +4,7 @@ import LoadingPage from "../components/common/LoadingPage";
 import RoomListPage from "../pages/room/RoomListPage";
 import RoomComponent from "../components/room/RoomComponent";
 
-// import roomRouter from "./roomRouter";
+import MyInfo from "../pages/main/MyInfo";
 
 // 지연 로딩 처리
 const KakakoRedirect = lazy(() => import("../pages/user/KakaoRedirectPage"));
@@ -51,6 +51,14 @@ const Router = () => {
       element: (
         <Suspense fallback={<div>Loading...</div>}>
           <RoomListPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/myinfo",
+      element: (
+        <Suspense fallback={<div>Loading...</div>}>
+          <MyInfo />
         </Suspense>
       ),
     },
