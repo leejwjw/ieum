@@ -17,7 +17,7 @@ const ACCESS_TOKEN_URL = `https://kauth.kakao.com/oauth/token`;
 
 // 카카오 인가 요청경로(링크) 크리에이터
 export const getKakaoLoginLink = () => {
-  const kakaoURL = `${AUTH_CODE_PATH}?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`;
+  const kakaoURL = `${AUTH_CODE_PATH}?response_type=code&client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}`; //&prompt=login
   return kakaoURL;
 };
 

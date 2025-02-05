@@ -45,19 +45,19 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 Map<String, Object> claims = JWTUtil.validateToken(accessToken); // 예외 발생가능
                 log.info("JWTCheckFilter - doFilterInternal cliams : {}", claims);
 
-                String email = (String) claims.get("username");
+                String username = (String) claims.get("username");
                 String nickname = (String) claims.get("nickname");
                 String keyword = (String) claims.get("keyword");
                 String nation =  (String) claims.get("nation");
-                String status =  (String) claims.get("status");
-                String photoPath = (String) claims.get("photo_path");
                 Boolean isPublic = (Boolean) claims.get("isPublic");
                 Boolean isUser = (Boolean) claims.get("isUser");
+                String photoPath = (String) claims.get("photo_path");
                 LocalDateTime regDate = (LocalDateTime) claims.get("reg_date");
+                String status =  (String) claims.get("status");
 
 
                 // AccessToken에 저장된 사용자 정보를 꺼내서 UserDetails타입인 UserDTO에 정보 담아 생성
-                UserDTO userDTO = new UserDTO(email, nickname, keyword, nation, status, photoPath, isPublic, isUser, regDate);
+                UserDTO userDTO = new UserDTO(username, nickname, keyword, nation, isPublic, isUser, photoPath, regDate, status);
                 log.info("JWTCheckFilter - AccessToken to userDTO : {}", userDTO);
 
                 // Authentication 객체 생성 (시큐리티 인증)

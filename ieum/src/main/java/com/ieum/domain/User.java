@@ -17,18 +17,19 @@ public class User {
     @Id
     private String USERNAME;
     private String NICK_NAME;
-    private String PASSWORD;
+    private String KEYWORD;
     private String NATION_NAME;
-
-    @Enumerated(EnumType.STRING)
-    private UserStatus STATUS;
     private Boolean IS_PUBLIC;
     private Boolean IS_USER;
-    private String PHOTO;
-    private String KEYWORD;
-
+    private String PHOTO_PATH;
     @Builder.Default
     private LocalDateTime REG_DATE = LocalDateTime.now();
+    @Enumerated(EnumType.STRING)
+    private UserStatus STATUS;
+
+
+
+
 
 
 }
