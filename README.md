@@ -16,6 +16,6 @@
 - **Backend**: Spring Boot, REST API 🖥️
 - **Frontend**: React, WebSocket ⚛️
 - **번역 API**: Google Translate API (혹은 자체 번역 서비스) 🌐
-- **위치 정보 처리**: Geolocation API 📍
-- **Database**: MySQL 💾
+- **위치 정보 처리**: KaKaoMap API 📍
+- **Database**: MySQL 💾, JPA, MyBatis
 - **실시간 통신**: WebSocket 🔌
