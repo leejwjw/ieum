@@ -4,16 +4,12 @@ import LoadingPage from "../components/common/LoadingPage";
 import RoomListPage from "../pages/room/RoomListPage";
 import RoomComponent from "../components/room/RoomComponent";
 
-import MyInfo from "../pages/main/MyInfo";
-
 // 지연 로딩 처리
 const KakakoRedirect = lazy(() => import("../pages/user/KakaoRedirectPage"));
 const Home = lazy(() => import("../pages/main/Home"));
 const Main = lazy(() => import("../pages/main/Main"));
 const Info = lazy(() => import("../pages/main/Info"));
-
-import Home from "../pages/main/Home";
-import MyInfo from "../pages/main/MyInfo";
+const MyInfo = lazy(() => import("../pages/main/MyInfo"));
 
 const Router = () => {
   return useRoutes([

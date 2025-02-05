@@ -29,7 +29,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (path.equals("/myinfo")) {
+        if (path.equals("/getNations")) {
             filterChain.doFilter(request, response);
             return;
         }

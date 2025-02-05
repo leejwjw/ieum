@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { getList } from "../../api/roomApi";
 import HeaderComponent from "../../components/common/HeaderComponent";
-import FooterComponent from "../../components/common/FooterComponenet";
+import FooterComponent from "../../components/common/FooterComponent";
 import AdComponent from "../../components/common/AdComponent";
 
 const RoomList = () => {

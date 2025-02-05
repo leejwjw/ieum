@@ -9,9 +9,11 @@ const NationComponent = () => {
   useEffect(() => {
     const loadCountries = async () => {
       const countryData = await fetchCountries();
+      console.log("불러온 국가 데이터:", countryData); //  중간에 countries 출력
+
       if (countryData.length > 0) {
         setCountries(countryData);
-        setSelectedCountry(countryData[0]); // 기본값으로 첫 번째 국가 선택
+        setSelectedCountry(countryData[47]); // 기본값: 첫 번째 국가
       }
     };
 
@@ -20,64 +22,59 @@ const NationComponent = () => {
 
   const handleSelectCountry = (country) => {
     setSelectedCountry(country);
+
     setIsModalOpen(false);
   };
 
   return (
     <div className="sm:col-span-1">
       {/* 국가 선택 라벨 */}
-      <label
-        htmlFor="country-flag"
-        className="block text-lg font-medium text-gray-900 leading-6"
-      >
+      <label className="block text-lg font-medium text-gray-900 leading-6">
         국가 선택
       </label>
 
       {/* 선택된 국가 입력 필드 (클릭 시 모달 열림) */}
-      <div className="mt-2 grid grid-cols-1">
+      <div className="mt-2">
         <div
-          className="col-start-1 row-start-1 w-full flex items-center justify-center gap-2 cursor-pointer rounded-md bg-white h-9 py-3 text-lg text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600"
+          className="w-full flex items-center justify-center gap-2 cursor-pointer rounded-md bg-white h-9 px-4 text-lg text-gray-900 outline outline-1 outline-gray-300 focus:outline-indigo-600"
           onClick={() => setIsModalOpen(true)}
         >
-          {selectedCountry && (
-            <img src={selectedCountry.flag} alt={selectedCountry.name} />
+          {selectedCountry ? (
+            <>
+              <img
+                src={selectedCountry.flAG}
+                alt={selectedCountry.nation_NAME}
+                className="w-6 h-4"
+              />
+            </>
+          ) : (
+            <span>국가를 선택해주세요</span>
           )}
-
-          <img src={selectedCountry.flag} />
         </div>
-        <svg
-          className="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4"
-          viewBox="0 0 16 16"
-          fill="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            fillRule="evenodd"
-            d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-            clipRule="evenodd"
-          />
-        </svg>
       </div>
 
       {/* 국가 선택 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white rounded-lg shadow-lg w-80 p-6">
+          <div className="bg-white rounded-lg shadow-lg w-100 p-6 max-h-[80vh] overflow-y-auto">
             <h2 className="text-lg font-semibold text-center mb-4">
               국가 선택
             </h2>
-            <ul className="space-y-2">
+            <ul className="grid grid-cols-5 gap-4">
               {countries.map((country) => (
                 <li
                   key={country.code}
-                  className="flex items-center gap-3 p-2 rounded-md hover:bg-gray-100 cursor-pointer"
+                  className="flex flex-col items-center gap-2 p-1 rounded-md hover:bg-gray-100 cursor-pointer"
                   onClick={() => handleSelectCountry(country)}
                 >
                   <img
-                    src={country.flag}
-                    alt={country.name}
-                    className="w-6 h-4"
+                    src={country.flAG}
+                    alt={country.nation_name}
+                    className="w-8 h-6"
                   />
+                  <span className="text-xs text-center">
+                    {country.nation_name}
+                  </span>
                 </li>
               ))}
             </ul>

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { getMsgs } from "../../api/roomApi";
 import { useParams } from "react-router-dom";
 import HeaderComponent from "../../components/common/HeaderComponent";
-import FooterComponent from "../../components/common/FooterComponenet";
+import FooterComponent from "../common/FooterComponent";
 import ChatSideBarComponenet from "./ChatSideBarComponenet";
 const RoomComponent = () => {
   const { room_ID } = useParams(); // URL에서 room_ID 가져오기
