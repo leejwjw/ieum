@@ -1,9 +1,8 @@
 package com.ieum.security.handler;
 
 import com.google.gson.Gson;
-import com.hello.shopapi.dto.MemberDTO;
-import com.hello.shopapi.util.JWTUtil;
 import com.ieum.dto.UserDTO;
+import com.ieum.util.JWTUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -27,7 +26,7 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         // 리액트에 응답해줄 응답 데이터 생성
         UserDTO userDTO = (UserDTO) authentication.getPrincipal();
-        Map<String, Object> claims = memberDTO.getClaims(); // 사용자정보 Map으로 만든것 리턴
+        Map<String, Object> claims = userDTO.getClaims(); // 사용자정보 Map으로 만든것 리턴
 
         // JWTUtil 이용해 AccessToken, RefreshToken 생성 -> claims 에 추가
         String accessToken = JWTUtil.generateToken(claims, 10);
