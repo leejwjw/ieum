@@ -41,7 +41,7 @@ public class CustomSecurityConfig {
         // URL 접근 권한 설정
         http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
 //                .requestMatchers("/admin/**").authenticated()  // 인증된 사용자만 접근 가능한 url 작성
-                .requestMatchers("/**").permitAll()   // 누구나 접근 가능한 url 작성
+                .requestMatchers("/user/**", "/api/auth/kakaoLogin").permitAll()   // 누구나 접근 가능한 url 작성
                 .anyRequest().authenticated() // 그 외 모든 요청은 인증 필요
         );
 

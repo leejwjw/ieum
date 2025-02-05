@@ -23,6 +23,13 @@ public class JWTCheckFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // 특정 경로는 필터를 건너뛴다.
+        String path = request.getRequestURI();
+        if (path.equals("/api/auth/kakaoLogin")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         log.info("*********** JWTCheckFilter - doFilterInternal");
 
         String authHeaderValue = request.getHeader("Authorization");
@@ -41,11 +48,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 String status =  (String) claims.get("status");
                 String photoPath = (String) claims.get("photo_path");
                 Boolean isPublic = (Boolean) claims.get("isPublic");
+                Boolean isUser = (Boolean) claims.get("isUser");
                 LocalDateTime regDate = (LocalDateTime) claims.get("reg_date");
 
 
                 // AccessToken에 저장된 사용자 정보를 꺼내서 UserDetails타입인 UserDTO에 정보 담아 생성
-                UserDTO userDTO = new UserDTO(email, nickname, keyword, nation, status, photoPath, isPublic, regDate);
+                UserDTO userDTO = new UserDTO(email, nickname, keyword, nation, status, photoPath, isPublic, isUser, regDate);
                 log.info("JWTCheckFilter - AccessToken to userDTO : {}", userDTO);
 
                 // Authentication 객체 생성 (시큐리티 인증)

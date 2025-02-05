@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @ToString
 public class User {
 
@@ -22,6 +23,7 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus STATUS;
     private Boolean IS_PUBLIC;
+    private Boolean IS_USER;
     private String PHOTO;
     private String KEYWORD;
 

@@ -27,7 +27,7 @@ public class KakaoAuthService {
 
     private final UserRepository userRepository;
 
-    public UserDTO getKakaoMember(String accessToken) throws Exception  {
+    public UserDTO getKakaoUser(String accessToken) throws Exception  {
         try {
         String email = getKakaoAccessTokenEmail(accessToken);
         log.info("getKakaoUser - email : {}", email);
@@ -35,10 +35,19 @@ public class KakaoAuthService {
         Optional<User> findMember = userRepository.findById(email);
         // 기존 회원이다 -> DB에서 찾은 User를 UserDTO로 변환해 리턴
         if(findMember.isPresent()) {
-            UserDTO UserDTO = entityToDTO(findMember.get());
-            return UserDTO;
+            // 기존 회원인 경우
+            User user = findMember.get();
+
+            // 최초 로그인 시 isUser 값을 업데이트 (새로운 회원에서 기존 회원으로 전환)
+            if (!user.getIS_USER()) {
+                user.setIS_USER(true); // 상태 업데이트
+                userRepository.save(user); // DB에 반영
+            }
+
+            // DTO로 변환하여 반환
+            return entityToDTO(user);
         }
-        // 기존 회원이 아니다 -> 임시비번과 임시 닉네임으로 Member 엔티티 생성해 DB에 저장 & DTO리턴
+        // 기존 회원이 아니다 -> 임시 닉네임으로 User 엔티티 생성해 DB에 저장 & DTO리턴
         User socialUser = makeSocialUser(email);
         userRepository.save(socialUser);
         UserDTO socialUserDTO = entityToDTO(socialUser);
@@ -52,13 +61,7 @@ public class KakaoAuthService {
     }
 
 // 정보 수정
-//    public void modifyMember(MemberModifyDTO memberModifyDTO) {
-//        Member member = memberRepository.findById(memberModifyDTO.getEmail()).orElseThrow();
-//        member.changePassword(passwordEncoder.encode(memberModifyDTO.getPassword()));
-//        member.changeSocial(false); // 이후 로그인시 일반회원처럼 로그인 처리
-//        member.changeNickname(memberModifyDTO.getNickname());
-//        memberRepository.save(member);
-//    }
+
 
     // 카카오에 사용자 정보 요청
     private String getKakaoAccessTokenEmail(String accessToken) {
@@ -99,6 +102,7 @@ public class KakaoAuthService {
                 User.getKEYWORD(),
                 User.getNATION_NAME(),
                 User.getIS_PUBLIC(),
+                User.getIS_USER(),
                 User.getPHOTO(),
                 User.getREG_DATE(),
                 String.valueOf(User.getSTATUS())
@@ -106,14 +110,19 @@ public class KakaoAuthService {
         return UserDTO;
     }
 
+    public boolean isUserExists(String email) {
+        return userRepository.findById(email).isPresent();
+    }
+
     // 이메일이 존재하지 않을 경우, User엔티티 생성해주는 메서드
     private User makeSocialUser(String email) {
-        String nickName = "Social User"; // 임의의 닉네임 생성
+        String nickName = "Social_" + email.split("@")[0]; // 이메일을 기반으로 임의 닉네임 생성
         User user = User.builder()
                 .USERNAME(email)
                 .NICK_NAME(nickName)
-                .IS_PUBLIC(Boolean.TRUE)
+                .IS_PUBLIC(true)
                 .STATUS(UserStatus.ACTIVE)
+                .IS_USER(false)
                 .build();
         return user;
     }

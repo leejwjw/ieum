@@ -5,9 +5,10 @@ import com.ieum.service.KakaoAuthService;
 import com.ieum.util.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -20,7 +21,8 @@ public class SocialController {
     private final KakaoAuthService kakaoAuthService;
 
     // 화면에서 받은 accessToken을 통해 사용자 정보 요청
-    public Map<String, Object> getMemberFromKakao(String accessToken) {
+    @GetMapping("/kakaoLogin")
+    public Map<String, Object> getUserKakao(String accessToken) throws Exception {
         log.info("************* SocialController - accessToken : {}", accessToken);
 
         // accessToken이 없으면 오류 처리
