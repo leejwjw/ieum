@@ -1,11 +1,13 @@
 package com.ieum.util;
 
 import io.jsonwebtoken.*;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.security.SecureRandom;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
@@ -13,35 +15,31 @@ import java.util.Map;
 @Slf4j
 public class JWTUtil {
 
-    private static String key; // 메모리에 저장된 비밀 키
+    private static String key = "aGVsbG9Kd3RTZWNyZXRLZXloZWxsb0p3dFNlY3JldEtleWhlbGxvSnd0U2VjcmV0S2V5aGVsbG9Kd3RTZWNyZXRLZXkK";
 
-    static {
-        regenerateKey(); // 클래스 로드 시 SecretKey 생성
-    }
 
     // JWT Secret Key 생성
-    public static void regenerateKey() {
-        SecureRandom random = new SecureRandom();
-        byte[] keyBytes = new byte[32]; // 32바이트 키
-        random.nextBytes(keyBytes);
-        key = Base64.getEncoder().encodeToString(keyBytes);
-        log.info("New SecretKey Generated: {}", key);
-    }
 
     // JWT 토큰 생성
     public static String generateToken(Map<String, Object> valueMap, int min) {
+        SecretKey secretKey = null;
+
         try {
             // HmacSHA256 알고리즘 기반으로 SecretKey 생성
-            SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "HmacSHA256");
+            secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "HmacSHA256");
             log.info("SecretKey 생성 완료: {}", secretKey);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
 
+        try {
             // JWT 토큰 생성
             String jwtStr = Jwts.builder()
                     .setHeader(Map.of("typ", "JWT")) // 헤더 설정
                     .setClaims(valueMap)             // 클레임 설정
-                    .setIssuedAt(new Date(System.currentTimeMillis())) // 현재 발행 시간
-                    .setExpiration(new Date(System.currentTimeMillis() + min * 60 * 1000)) // 토큰 만료 시간
-                    .signWith(secretKey, SignatureAlgorithm.HS256) // 서명 , 서명시 알고리즘 명시
+                    .setIssuedAt(Date.from(ZonedDateTime.now().toInstant())) // 현재 발행 시간
+                    .setExpiration(Date.from(ZonedDateTime.now().plusMinutes(min).toInstant())) // 토큰 만료 시간
+                    .signWith(secretKey) // 서명 , 서명시 알고리즘 명시
                     .compact();
             log.info("JWT 생성 완료: {}", jwtStr);
             return jwtStr;
@@ -54,11 +52,9 @@ public class JWTUtil {
     // 토큰 검증 메서드
     public static Map<String, Object> validateToken(String token) {
         Map<String, Object> claim = null;
+        SecretKey secretKey = null;
         try {
-            // HmacSHA256 알고리즘 기반으로 SecretKey 생성
-            SecretKey secretKey = new SecretKeySpec(key.getBytes("UTF-8"), "HmacSHA256");
-            log.info("ValidateToken SecretKey 생성 완료: {}", secretKey);
-
+            secretKey = Keys.hmacShaKeyFor(JWTUtil.key.getBytes("UTF-8"));
             claim = Jwts.parserBuilder()
                     .setSigningKey(secretKey)
                     .build()
@@ -75,6 +71,7 @@ public class JWTUtil {
         } catch (Exception e) {
             throw new CustomJWTException("Error"); //  나머지 예외
         }
+
         return claim;
     }
 }

@@ -4,12 +4,13 @@ import com.ieum.domain.User;
 import com.ieum.domain.UserStatus;
 import com.ieum.dto.UserDTO;
 import com.ieum.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
@@ -17,35 +18,32 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class KakaoAuthService {
 
     private final UserRepository userRepository;
-    @Value("${kakao.auth.rest-api-key}")
-    private String KAKAO_REST_API; // 카카오 REST API 키
 
-    public KakaoAuthService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-    public UserDTO getKakaoUserInfo(String accessToken) throws Exception {
+    public UserDTO getKakaoMember(String accessToken) throws Exception  {
         try {
-            String email = getKakaoUser(accessToken);
+        String email = getKakaoAccessTokenEmail(accessToken);
+        log.info("getKakaoUser - email : {}", email);
 
-            Optional<User> findUser = userRepository.findById(email);
-            // 기존 회원일 경우
-            if (findUser.isPresent()) {
-                UserDTO userDTO = entityToDTO(findUser.get());
-                return userDTO;
-            }
-            // 기존 회원이 아닐 경우
-            User socialUser = makeSocialUser(email);
-            userRepository.save(socialUser);
-            UserDTO socialUserDTO = entityToDTO(socialUser);
+        Optional<User> findMember = userRepository.findById(email);
+        // 기존 회원이다 -> DB에서 찾은 User를 UserDTO로 변환해 리턴
+        if(findMember.isPresent()) {
+            UserDTO UserDTO = entityToDTO(findMember.get());
+            return UserDTO;
+        }
+        // 기존 회원이 아니다 -> 임시비번과 임시 닉네임으로 Member 엔티티 생성해 DB에 저장 & DTO리턴
+        User socialUser = makeSocialUser(email);
+        userRepository.save(socialUser);
+        UserDTO socialUserDTO = entityToDTO(socialUser);
 
-            return socialUserDTO;
+        return socialUserDTO;
         } catch (Exception e) {
             // 예외 처리, 로그 찍기
             System.err.println("카카오 API 호출 중 오류 발생: " + e.getMessage());
@@ -53,32 +51,44 @@ public class KakaoAuthService {
         }
     }
 
+// 정보 수정
+//    public void modifyMember(MemberModifyDTO memberModifyDTO) {
+//        Member member = memberRepository.findById(memberModifyDTO.getEmail()).orElseThrow();
+//        member.changePassword(passwordEncoder.encode(memberModifyDTO.getPassword()));
+//        member.changeSocial(false); // 이후 로그인시 일반회원처럼 로그인 처리
+//        member.changeNickname(memberModifyDTO.getNickname());
+//        memberRepository.save(member);
+//    }
 
+    // 카카오에 사용자 정보 요청
+    private String getKakaoAccessTokenEmail(String accessToken) {
+        // 카카오 사용자 정보 요청 URL
+        String KAKAO_USER_INFO_URL = "https://kapi.kakao.com/v2/user/me";
 
-
-
-    public String getKakaoUser(String accessToken) {
-        // 카카오 사용자 정보 조회 API URL
-        String KAKAO_API_URL = "https://kapi.kakao.com/v2/user/me";
-
-        if (accessToken == null) {
+        if(accessToken == null) {
             throw new RuntimeException("Access Token is null");
         }
 
+        // 카카오 서버에 HTTP 요청
         RestTemplate restTemplate = new RestTemplate();
-
+        // 헤더정보 생성
         HttpHeaders headers = new HttpHeaders();
         headers.add("Authorization", "Bearer " + accessToken);
         headers.add("Content-Type", "application/x-www-form-urlencoded;charset=utf-8");
-
+        // 헤더 정보 포함해 HttpEntity 객체 생성
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_API_URL).build();
-        ResponseEntity<LinkedHashMap> response = restTemplate.exchange(uriBuilder.toString(), HttpMethod.GET, entity, LinkedHashMap.class);
+        // 요청 경로 생성해주는 클래스 이용
+        UriComponents uriBuilder = UriComponentsBuilder.fromHttpUrl(KAKAO_USER_INFO_URL).build();
+        ResponseEntity<LinkedHashMap> response =
+                restTemplate.exchange(uriBuilder.toString(), HttpMethod.GET, entity, LinkedHashMap.class);
+        log.info(" MemberService - response : {}", response);
         LinkedHashMap<String, LinkedHashMap> responseBody = response.getBody();
+        log.info(" MemberService - responseBody : {}", responseBody);
+        // 응답 내용중 카카오 계정 정보 꺼낼 수 있다.
         LinkedHashMap<String, String> kakaoAccount = responseBody.get("kakao_account");
-
-        return kakaoAccount.get("email");
+        log.info(" MemberService - kakaoAccount : {}", kakaoAccount);
+        return kakaoAccount.get("email"); // 이메일만 꺼내서 리턴
     }
 
     // User 엔티티 -> UserDTO 변환 default 메서드
@@ -95,7 +105,6 @@ public class KakaoAuthService {
         );
         return UserDTO;
     }
-
 
     // 이메일이 존재하지 않을 경우, User엔티티 생성해주는 메서드
     private User makeSocialUser(String email) {

@@ -1,7 +1,9 @@
 package com.ieum.security.handler;
 
+import com.google.gson.Gson;
+import com.hello.shopapi.dto.MemberDTO;
+import com.hello.shopapi.util.JWTUtil;
 import com.ieum.dto.UserDTO;
-import com.ieum.util.JWTUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,21 +26,21 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("******************************** authentication - {}", authentication);
 
         // 리액트에 응답해줄 응답 데이터 생성
-        UserDTO UserDTO = (UserDTO) authentication.getPrincipal();
-        Map<String, Object> claims = UserDTO.getClaims(); // 사용자정보 Map으로 만든것 리턴
+        UserDTO userDTO = (UserDTO) authentication.getPrincipal();
+        Map<String, Object> claims = memberDTO.getClaims(); // 사용자정보 Map으로 만든것 리턴
 
         // JWTUtil 이용해 AccessToken, RefreshToken 생성 -> claims 에 추가
         String accessToken = JWTUtil.generateToken(claims, 10);
         String refreshToken = JWTUtil.generateToken(claims, 60 * 24);
         claims.put("accessToken", accessToken);
         claims.put("refreshToken", refreshToken);
-//
-//        Gson gson = new Gson();
-//        String jsonStr = gson.toJson(claims); // 자바 Map 객체 -> JSON(JSON.stringify) 문자열로 변환
 
-//        response.setContentType("application/json; charset=utf-8"); // 응답 헤더 정보 추가
-//        PrintWriter writer = response.getWriter();
-//        writer.println(jsonStr); // 데이터 응답하기
-//        writer.close();
+        Gson gson = new Gson();
+        String jsonStr = gson.toJson(claims); // 자바 Map 객체 -> JSON(JSON.stringify) 문자열로 변환
+
+        response.setContentType("application/json; charset=utf-8"); // 응답 헤더 정보 추가
+        PrintWriter writer = response.getWriter();
+        writer.println(jsonStr); // 데이터 응답하기
+        writer.close();
     }
 }

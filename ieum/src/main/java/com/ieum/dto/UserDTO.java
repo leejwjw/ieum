@@ -18,10 +18,10 @@ public class UserDTO {
     public UserDTO(String USERNAME, String NICK_NAME, String NATION_NAME, String STATUS, String PHOTO_PATH, String KEYWORD, boolean IS_PUBLIC, LocalDateTime REG_DATE) {
         this.USERNAME = USERNAME;
         this.NICK_NAME = NICK_NAME;
+        this.KEYWORD = KEYWORD;
         this.NATION_NAME = NATION_NAME;
         this.STATUS = STATUS;
         this.PHOTO_PATH = PHOTO_PATH;
-        this.KEYWORD = KEYWORD;
         this.IS_PUBLIC = IS_PUBLIC;
         this.REG_DATE = REG_DATE;
     }
@@ -32,8 +32,14 @@ public class UserDTO {
     // JWT 를 위한 메서드 : 현재 사용자 정보 Map 타입으로 리턴
     public Map<String, Object> getClaims() {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("email", USERNAME);
+        claims.put("username", USERNAME);
+        claims.put("nickname", NICK_NAME);
+        claims.put("keyword", KEYWORD);
+        claims.put("nation", NATION_NAME);
         claims.put("status", STATUS);
+        claims.put("photoPath", PHOTO_PATH);
+        claims.put("isPublic", IS_PUBLIC);
+        claims.put("regDate", REG_DATE);
         return claims;
     }
 }
