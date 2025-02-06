@@ -1,8 +1,6 @@
 import { lazy, Suspense } from "react";
 import { useRoutes } from "react-router-dom";
 import LoadingPage from "../components/common/LoadingPage";
-import RoomListPage from "../pages/room/RoomListPage";
-import RoomComponent from "../components/room/RoomComponent";
 import PrivateRoute from "../components/common/PrivateRoute";
 
 // 지연 로딩 처리
@@ -13,6 +11,8 @@ const MyInfo = lazy(() => import("../pages/main/MyInfo"));
 const Modify = lazy(() => import("../pages/main/Modify"));
 const Setting = lazy(() => import("../pages/main/Setting"));
 const Faq = lazy(() => import("../pages/main/Faq"));
+const RoomComponent = lazy(() => import("../components/room/RoomComponent"));
+const RoomListPage = lazy(() => import("../pages/room/RoomListPage"));
 
 const Router = () => {
   return useRoutes([
@@ -65,41 +65,51 @@ const Router = () => {
     {
       path: "/myinfo",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <MyInfo />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <MyInfo />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/modify",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Modify />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Modify />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/roomList/room/:room_ID",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <RoomComponent />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <RoomComponent />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/setting",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Setting />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Setting />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/faq",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Faq />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Faq />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
   ]);

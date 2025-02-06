@@ -12,7 +12,6 @@ export const setCookie = (name, value, days) => {
 
 // 쿠키 조회 함수
 export const getCookie = (name) => {
-  console.log(`getCookie 호출됨: 쿠키 이름 - ${name}`); // 추가 로그
   const cookie = cookies.get(name);
   console.log(`쿠키 값: ${cookie}`); // 반환 값 확인
   return cookie;

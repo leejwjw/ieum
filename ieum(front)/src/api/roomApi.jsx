@@ -2,16 +2,16 @@ import axios from "axios";
 import { getCookie } from "../util/cookieUtil";
 
 const userInfo = getCookie("user");
-
-const userName = userInfo.username;
-
-console.log("userName --" + userName);
+const userToken = userInfo.accessToken;
+console.log("userJWTToken: {}", userToken);
 
 export const getList = async (userName) => {
   try {
     console.log(userName);
+    const header = { headers: { Authorization: `Bearer ${userToken}` } };
     const result = await axios.get(
-      `http://localhost:8080/room/list/${userName}`
+      `http://localhost:8080/room/list/${userName}`,
+      header
     );
     return result.data;
   } catch (error) {
@@ -21,7 +21,11 @@ export const getList = async (userName) => {
 };
 export const getOpenRoomList = async () => {
   try {
-    const result = await axios.get(`http://localhost:8080/room/openList`);
+    const header = { headers: { Authorization: `Bearer ${userToken}` } };
+    const result = await axios.get(
+      `http://localhost:8080/room/openList`,
+      header
+    );
     return result.data;
   } catch (error) {
     console.error("getList ERROR ! :", error);
@@ -30,12 +34,11 @@ export const getOpenRoomList = async () => {
 };
 
 export const getMsgs = async (room_ID) => {
-  console.log("id ++++++++" + userInfo.accessToken);
-
-  const header = {
-    headers: { Authorization: `Bearer ${userInfo.accessToken}` },
-  };
+  console.log("id ++++++++" + userToken);
   try {
+    const header = {
+      headers: { Authorization: `Bearer ${userToken}` },
+    };
     const result = await axios.get(
       `http://localhost:8080/room/msgs/${room_ID}`,
       header
@@ -56,9 +59,13 @@ export const createRoom = async (name) => {
 export const createOpenRoom = async (roomData) => {
   console.log(roomData);
   try {
+    const header = {
+      headers: { Authorization: `Bearer ${userToken}` },
+    };
     const result = await axios.post(
       "http://localhost:8080/room/createOpen",
-      roomData
+      roomData,
+      header
     );
     return result.data;
   } catch (error) {

@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-const InterestModal = () => {
+const InterestModal = ({ callbackFn }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    callbackFn(); // 확인 버튼을 누르면 callbackFn 호출
   };
 
   return (
@@ -16,7 +17,7 @@ const InterestModal = () => {
               <div className="grid place-items-center">
                 <div className="mt-3">
                   <div className="mt-2 mb-20">
-                    <img src="/register_complete.png" />
+                    <img src="/register_complete.png" alt="Complete" />
                   </div>
                 </div>
 
