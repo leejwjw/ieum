@@ -34,6 +34,11 @@ public class RoomController {
         log.info("list  :{}", roomService.getAllRooms());
         return roomService.getAllRooms();
     }
+    @GetMapping("/openList")
+    public List<Room> openList() {
+        log.info("OPENLIST****  :{}", roomService.getAllOpenRooms());
+        return roomService.getAllOpenRooms();
+    }
 
     @GetMapping("/msgs/{room_ID}")
     public List<Msg> getMsgs(@PathVariable("room_ID") Long roomId) {

@@ -33,6 +33,14 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
+        if (path.equals("/room/openList")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        if (path.equals("/room/list")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         log.info("*********** JWTCheckFilter - doFilterInternal");
 

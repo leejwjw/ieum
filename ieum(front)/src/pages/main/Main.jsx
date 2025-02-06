@@ -1,7 +1,23 @@
 import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../../components/common/FooterComponent";
+import { getOpenRoomList } from "../../api/roomApi";
+import { useEffect, useState } from "react";
 
 const Main = () => {
+  const [rooms, setRooms] = useState([]);
+
+  useEffect(() => {
+    const fetchRooms = async () => {
+      try {
+        const data = await getOpenRoomList();
+        setRooms(data);
+      } catch (error) {
+        console.error("에러ㅠㅠ", error);
+      }
+    };
+
+    fetchRooms();
+  }, []);
   return (
     <>
       <HeaderComponent />
@@ -226,7 +242,7 @@ const Main = () => {
                 </div>
               </div>
             </div>
-            <div className="grid gap-8 lg:grid-cols-2 h-px-600">
+            {/* <div className="grid gap-8 lg:grid-cols-2 h-px-600">
               <ul className="col-span-full divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto overflow-x-hidden pb-[80px]">
                 <li className="hover:bg-gray-200 p-5 lg:p-5 sm:p-3">
                   <div className="flex items-center space-x-4 rtl:space-x-reverse">
@@ -454,7 +470,7 @@ const Main = () => {
                   </div>
                 </li>
               </ul>
-            </div>
+            </div> */}
           </section>
         </div>
       </main>

@@ -9,6 +9,15 @@ export const getList = async () => {
     throw error;
   }
 };
+export const getOpenRoomList = async () => {
+  try {
+    const result = await axios.get(`http://localhost:8080/room/openList`);
+    return result.data;
+  } catch (error) {
+    console.error("getList ERROR ! :", error);
+    throw error;
+  }
+};
 
 export const getMsgs = async (room_ID) => {
   console.log("id ++++++++" + room_ID);

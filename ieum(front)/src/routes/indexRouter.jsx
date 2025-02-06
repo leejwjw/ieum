@@ -10,13 +10,15 @@ const KakakoRedirect = lazy(() => import("../pages/user/KakaoRedirectPage"));
 const Home = lazy(() => import("../pages/main/Home"));
 const Main = lazy(() => import("../pages/main/Main"));
 const MyInfo = lazy(() => import("../pages/main/MyInfo"));
+const Modify = lazy(() => import("../pages/main/Modify"));
+const Setting = lazy(() => import("../pages/main/Setting"));
 
 const Router = () => {
   return useRoutes([
     {
       path: "/home",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingPage />}>
           <Home />
         </Suspense>
       ),
@@ -52,16 +54,40 @@ const Router = () => {
     {
       path: "/roomList",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingPage />}>
           <RoomListPage />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/myinfo",
+      element: (
+        <Suspense fallback={<LoadingPage />}>
+          <MyInfo />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/modify",
+      element: (
+        <Suspense fallback={<LoadingPage />}>
+          <Modify />
         </Suspense>
       ),
     },
     {
       path: "/roomList/room/:room_ID",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingPage />}>
           <RoomComponent />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/setting",
+      element: (
+        <Suspense fallback={<LoadingPage />}>
+          <Setting />
         </Suspense>
       ),
     },
