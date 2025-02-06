@@ -3,7 +3,7 @@ import { getKakaoAccessToken } from "../api/kakaoApi";
 import { getCookie, setCookie, removeCookie } from "../util/cookieUtil";
 
 // 초기 상태 설정: 쿠키에서 사용자 정보를 불러오거나 초기화
-const initState = getCookie("username") || { email: "", nickname: "" };
+const initState = getCookie("user") || { email: "", nickname: "" };
 
 // Access Token으로 사용자 정보 가져오는 비동기 작업
 export const fetchUserInfo = createAsyncThunk(

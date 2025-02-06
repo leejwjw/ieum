@@ -27,9 +27,4 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus STATUS;
 
-
-
-
-
-
 }

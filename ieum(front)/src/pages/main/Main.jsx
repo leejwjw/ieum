@@ -4,7 +4,6 @@ import FooterComponent from "../../components/common/FooterComponent";
 const Main = () => {
   return (
     <>
-      <div>기존 회원이 오는 메인 페이지.</div>
       <HeaderComponent />
       <main>
         <div className="container mx-auto">

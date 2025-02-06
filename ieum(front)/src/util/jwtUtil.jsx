@@ -53,7 +53,7 @@ const beforeResp = async (res) => {
   console.log(res); //
   const data = res.data;
   if (data && data.error === "ERROR_ACCESS_TOKEN") {
-    const userCookieVal = getCookie("member");
+    const userCookieVal = getCookie("user");
     const result = await refreshJWT(
       userCookieVal.accessToken,
       userCookieVal.refreshToken
@@ -63,7 +63,7 @@ const beforeResp = async (res) => {
     // 쿠키에 토큰 갱신
     userCookieVal.accessToken = result.accessToken;
     userCookieVal.refreshToken = result.refreshToken;
-    setCookie("member", JSON.stringify(userCookieVal), 1);
+    setCookie("user", JSON.stringify(userCookieVal), 1); // 1일 동안 저장
 
     // 원래 요청 정보 꺼내서, 재요청
     const originalRequest = res.config;
