@@ -32,6 +32,9 @@ public class RoomService {
     public List<Room> getAllOpenRooms() {
         return roomRepository.findOpenRoomAll();
     }
+    public List<Room> getMyRooms(String userName) {
+        return  roomRepository.getRoomsByUserName(userName);
+    }
     public Room getRoomById(Long id) {
         return roomRepository.findById(id).orElse(null);
     }

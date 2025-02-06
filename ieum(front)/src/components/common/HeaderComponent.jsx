@@ -82,7 +82,8 @@ const HeaderComponent = () => {
         </div>
       </nav>
 
-      <nav className="p-20 bg-white  dark:bg-gray-900 antialiased">
+      {/* 검색 헤더 따로 분리해아함 */}
+      {/* <nav className="p-20 bg-white  dark:bg-gray-900 antialiased">
         <form className="max-w-md mx-auto">
           <div className="relative">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -117,7 +118,7 @@ const HeaderComponent = () => {
             </button>
           </div>
         </form>
-      </nav>
+      </nav> */}
     </header>
   );
 };

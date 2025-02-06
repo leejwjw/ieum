@@ -1,8 +1,18 @@
 import axios from "axios";
+import { getCookie } from "../util/cookieUtil";
 
-export const getList = async () => {
+const userInfo = getCookie("user");
+
+const userName = userInfo.username;
+
+console.log("userName --" + userName);
+
+export const getList = async (userName) => {
   try {
-    const result = await axios.get(`http://localhost:8080/room/list`);
+    console.log(userName);
+    const result = await axios.get(
+      `http://localhost:8080/room/list/${userName}`
+    );
     return result.data;
   } catch (error) {
     console.error("getList ERROR ! :", error);
@@ -20,11 +30,15 @@ export const getOpenRoomList = async () => {
 };
 
 export const getMsgs = async (room_ID) => {
-  console.log("id ++++++++" + room_ID);
+  console.log("id ++++++++" + userInfo.accessToken);
 
+  const header = {
+    headers: { Authorization: `Bearer ${userInfo.accessToken}` },
+  };
   try {
     const result = await axios.get(
-      `http://localhost:8080/room/msgs/${room_ID}`
+      `http://localhost:8080/room/msgs/${room_ID}`,
+      header
     );
     console.log(result.data);
     return result.data;

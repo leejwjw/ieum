@@ -8,6 +8,7 @@ import com.ieum.domain.Room;
 import com.ieum.domain.RoomType;
 import com.ieum.service.MsgService;
 import com.ieum.service.RoomService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -29,10 +30,10 @@ public class RoomController {
     private final RoomService roomService;
     private final MsgService msgService;
 
-    @GetMapping("/list")
-    public List<Room> list() {
-        log.info("list  :{}", roomService.getAllRooms());
-        return roomService.getAllRooms();
+    @GetMapping("/list/{userName}")
+    public List<Room> list(@PathVariable("userName") String userName) {
+        log.info("list  :{}", roomService.getMyRooms(userName));
+        return roomService.getMyRooms(userName);
     }
     @GetMapping("/openList")
     public List<Room> openList() {
@@ -41,9 +42,10 @@ public class RoomController {
     }
 
     @GetMapping("/msgs/{room_ID}")
-    public List<Msg> getMsgs(@PathVariable("room_ID") Long roomId) {
+    public List<Msg> getMsgs(@PathVariable("room_ID") Long roomId, HttpServletRequest request) {
         log.info("list$#$$################  :{}", msgService.getMsgs(roomId));
         log.info("@@@@@@@@@@roomId  :{}", roomId);
+        log.info("@@@@@@@@@@Authorization  :{}", request.getHeader("Authorization"));
         return msgService.getMsgs(roomId);
     }
     @PostMapping("/create")

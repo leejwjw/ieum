@@ -12,6 +12,7 @@ const Main = lazy(() => import("../pages/main/Main"));
 const MyInfo = lazy(() => import("../pages/main/MyInfo"));
 const Modify = lazy(() => import("../pages/main/Modify"));
 const Setting = lazy(() => import("../pages/main/Setting"));
+const Faq = lazy(() => import("../pages/main/Faq"));
 
 const Router = () => {
   return useRoutes([
@@ -54,9 +55,11 @@ const Router = () => {
     {
       path: "/roomList",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <RoomListPage />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <RoomListPage />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
@@ -88,6 +91,14 @@ const Router = () => {
       element: (
         <Suspense fallback={<LoadingPage />}>
           <Setting />
+        </Suspense>
+      ),
+    },
+    {
+      path: "/faq",
+      element: (
+        <Suspense fallback={<LoadingPage />}>
+          <Faq />
         </Suspense>
       ),
     },

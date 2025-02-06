@@ -4,14 +4,18 @@ import { getList } from "../../api/roomApi";
 import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../../components/common/FooterComponent";
 import AdComponent from "../../components/common/AdComponent";
+import { getCookie } from "../../util/cookieUtil";
 
+const userInfo = getCookie("user");
+const userName = userInfo ? userInfo : ""; // userName을 useEffect 바깥에서 선언
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const data = await getList();
+        if (!userName) return;
+        const data = await getList(userName);
         setRooms(data);
       } catch (error) {
         console.error("에러ㅠㅠ", error);
@@ -19,7 +23,7 @@ const RoomList = () => {
     };
 
     fetchRooms();
-  }, []);
+  }, [userName]);
 
   return (
     <div className="bg-white overflow-y-auto">
