@@ -7,7 +7,7 @@ import AdComponent from "../../components/common/AdComponent";
 import { getCookie } from "../../util/cookieUtil";
 
 const userInfo = getCookie("user");
-const userName = userInfo ? userInfo : ""; // userName을 useEffect 바깥에서 선언
+const userName = userInfo ? userInfo.username : ""; // userName을 useEffect 바깥에서 선언
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
 

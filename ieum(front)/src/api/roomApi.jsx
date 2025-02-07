@@ -2,13 +2,13 @@ import axios from "axios";
 import { getCookie } from "../util/cookieUtil";
 
 const userInfo = getCookie("user");
+
 const userToken = userInfo.accessToken;
 console.log("userJWTToken: {}", userToken);
+const header = { headers: { Authorization: `Bearer ${userToken}` } };
 
 export const getList = async (userName) => {
   try {
-    console.log(userName);
-    const header = { headers: { Authorization: `Bearer ${userToken}` } };
     const result = await axios.get(
       `http://localhost:8080/room/list/${userName}`,
       header
@@ -21,7 +21,6 @@ export const getList = async (userName) => {
 };
 export const getOpenRoomList = async () => {
   try {
-    const header = { headers: { Authorization: `Bearer ${userToken}` } };
     const result = await axios.get(
       `http://localhost:8080/room/openList`,
       header
@@ -34,11 +33,7 @@ export const getOpenRoomList = async () => {
 };
 
 export const getMsgs = async (room_ID) => {
-  console.log("id ++++++++" + userToken);
   try {
-    const header = {
-      headers: { Authorization: `Bearer ${userToken}` },
-    };
     const result = await axios.get(
       `http://localhost:8080/room/msgs/${room_ID}`,
       header

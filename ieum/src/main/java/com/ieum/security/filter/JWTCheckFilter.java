@@ -29,14 +29,15 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (path.equals("/room/list/audwls1864@nate.com")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+
         if (path.equals("/ws/chat")) {
             filterChain.doFilter(request, response);
             return;
         }
+//        if (path.equals("/room/msgs/5")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
 
 
@@ -55,6 +56,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 String nickname = (String) claims.get("nickname");
                 String keyword = (String) claims.get("keyword");
                 String nation =  (String) claims.get("nation");
+                String lang =  (String) claims.get("lang");
                 Boolean isPublic = (Boolean) claims.get("isPublic");
                 Boolean isUser = (Boolean) claims.get("isUser");
                 String photoPath = (String) claims.get("photo_path");
@@ -63,7 +65,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
                 // AccessToken에 저장된 사용자 정보를 꺼내서 UserDetails타입인 UserDTO에 정보 담아 생성
-                UserDTO userDTO = new UserDTO(username, nickname, keyword, nation, isPublic, isUser, photoPath, regDate, status);
+                UserDTO userDTO = new UserDTO(username, nickname, keyword, nation, lang, isPublic, isUser, photoPath, regDate, status);
                 log.info("JWTCheckFilter - AccessToken to userDTO : {}", userDTO);
 
                 // Authentication 객체 생성 (시큐리티 인증)

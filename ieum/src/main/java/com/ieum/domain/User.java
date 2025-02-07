@@ -20,6 +20,7 @@ public class User {
     private String NICK_NAME;
     private String KEYWORD;
     private String NATION_NAME;
+    private String LANG;
     private Boolean IS_PUBLIC;
     private Boolean IS_USER;
     private String PHOTO_PATH;

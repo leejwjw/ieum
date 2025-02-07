@@ -103,6 +103,7 @@ public class KakaoAuthService {
                 user.getNICK_NAME(),
                 user.getKEYWORD(),
                 user.getNATION_NAME(),
+                user.getLANG(),
                 user.getIS_PUBLIC(),
                 user.getIS_USER(),
                 user.getPHOTO_PATH(),

@@ -12,7 +12,7 @@ import java.util.List;
 public interface MsgRepository extends JpaRepository<Msg, Long> {
 
     // roomId로 메시지 리스트 조회 (커스텀 쿼리)
-    @Query("SELECT m FROM Msg m WHERE m.ROOM_ID = :roomId")
+    @Query("SELECT m FROM Msg m WHERE m.ROOM_ID = :roomId AND m.STATUS = 'ACTIVE' ")
     List<Msg> findMsgsByRoomId(Long roomId);
 
 

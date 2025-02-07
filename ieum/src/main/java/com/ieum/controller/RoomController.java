@@ -32,7 +32,7 @@ public class RoomController {
 
     @GetMapping("/list/{userName}")
     public List<Room> list(@PathVariable("userName") String userName) {
-        log.info("list  :{}", roomService.getMyRooms(userName));
+        log.info("list^^^^^^^^^^  :{}", roomService.getMyRooms(userName));
         return roomService.getMyRooms(userName);
     }
     @GetMapping("/openList")
@@ -43,9 +43,7 @@ public class RoomController {
 
     @GetMapping("/msgs/{room_ID}")
     public List<Msg> getMsgs(@PathVariable("room_ID") Long roomId, HttpServletRequest request) {
-        log.info("list$#$$################  :{}", msgService.getMsgs(roomId));
-        log.info("@@@@@@@@@@roomId  :{}", roomId);
-        log.info("@@@@@@@@@@Authorization  :{}", request.getHeader("Authorization"));
+
         return msgService.getMsgs(roomId);
     }
     @PostMapping("/create")

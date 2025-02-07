@@ -33,7 +33,7 @@ public class SocialController {
 
         UserDTO userDTO = kakaoAuthService.getKakaoUser(accessToken);
         Map<String, Object> claims = userDTO.getClaims();
-        String jwtAccessToken = JWTUtil.generateToken(claims, 10);
+        String jwtAccessToken = JWTUtil.generateToken(claims, 3000);
         String jwtRefreshToken = JWTUtil.generateToken(claims, 60 * 24);
         claims.put("accessToken", jwtAccessToken);
         claims.put("refreshToken", jwtRefreshToken);

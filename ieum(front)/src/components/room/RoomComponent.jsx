@@ -6,21 +6,26 @@ import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../common/FooterComponent";
 import ChatSideBarComponenet from "./ChatSideBarComponenet";
 import { getCookie } from "../../util/cookieUtil";
-
+const userInfo = getCookie("user");
+console.log(userInfo.lang);
+const userName = userInfo.username;
 const RoomComponent = () => {
   const { room_ID } = useParams();
   const [socket, setSocket] = useState(null);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
+  const [selectedLanguage, setSelectedLanguage] = useState("ko");
   const messagesEndRef = useRef(null); // 마지막 메시지를 가리킬 ref
+  const [isOpen, setIsOpen] = useState(false);
+
+  const languageOptions = [
+    { code: "kr", name: "한국어" },
+    { code: "en", name: "영어" },
+    { code: "ch", name: "중국어" },
+  ];
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const userInfo = getCookie("user");
-      console.log("메롱" + userInfo);
-
-      console.log(userInfo.accessToken);
-      // const userName = userInfo?.username;
       try {
         const data = await getMsgs(room_ID);
         setMessages(data);
@@ -46,10 +51,9 @@ const RoomComponent = () => {
           JSON.stringify({
             room_ID: room_ID,
             messageType: "ENTER",
-            username: "DDD",
-            content:
-              (window.location.hostname === "localhost" ? "나" : "상대") +
-              " 입장",
+            username: userName,
+            content: "채팅방에 접속했습니다.",
+            selectedLanguage: selectedLanguage,
             reg_date: new Date().toISOString().replace("T", " ").split(".")[0],
           })
         );
@@ -94,6 +98,7 @@ const RoomComponent = () => {
           messageType: "TALK",
           username: userName,
           content: inputMessage,
+          selectedLanguage: selectedLanguage,
           reg_date: new Date().toISOString().replace("T", " ").split(".")[0],
         })
       );
@@ -127,7 +132,7 @@ const RoomComponent = () => {
                       <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
                         <div>
                           <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">{msg.content}</p>
+                            <p className="text-sm">{msg[userInfo.lang]}</p>
                           </div>
                           <span className="text-xs text-gray-500 leading-none">
                             {msg.reg_date}
@@ -152,7 +157,7 @@ const RoomComponent = () => {
                         </div>
                         <div>
                           <div className="bg-gray-100 p-3 rounded-r-lg rounded-bl-lg">
-                            <p className="text-sm">{msg.content}</p>
+                            <p className="text-sm">{msg[userInfo.lang]}</p>
                           </div>
                           <span className="text-xs text-gray-500 leading-none">
                             {msg.reg_date}
@@ -169,6 +174,38 @@ const RoomComponent = () => {
 
             {/* 입력창 (하단 고정) */}
             <div className="absolute bottom-0 left-0 w-full bg-white p-4 border-t border-gray-200 shadow-md flex items-center">
+              {/* Language Selector */}
+              <div className="relative mr-2 text-xs">
+                <div
+                  className="flex items-center p-2 border border-gray-300 rounded-xl cursor-pointer"
+                  onClick={() => setIsOpen(!isOpen)}
+                >
+                  <span className="mr-2">
+                    {languageOptions.find(
+                      (lang) => lang.code === selectedLanguage
+                    )?.name || "한국어"}
+                  </span>
+                  <span className="text-gray-600">▼</span>
+                </div>
+                {isOpen && (
+                  <ul className="absolute z-10 mb-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg bottom-full">
+                    {languageOptions.map((lang) => (
+                      <li
+                        key={lang.code}
+                        className="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-gray-900"
+                        onClick={() => {
+                          setSelectedLanguage(lang.code);
+                          setIsOpen(false);
+                        }}
+                      >
+                        {lang.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              {/* Message Input */}
               <input
                 type="text"
                 value={inputMessage}
@@ -181,6 +218,8 @@ const RoomComponent = () => {
                 placeholder="메시지를 입력하세요"
                 className="flex-grow p-2 border border-gray-200 rounded-lg"
               />
+
+              {/* Send Button */}
               <button
                 onClick={sendMessage}
                 className="ml-2 px-4 py-2 bg-blue-500 text-white rounded-lg"

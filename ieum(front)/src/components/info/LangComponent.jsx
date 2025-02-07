@@ -5,6 +5,24 @@ const languages = ["한국어", "영어", "일본어"];
 const LangComponent = () => {
   const [selected, setSelected] = useState(languages[0]);
   const [isOpen, setIsOpen] = useState(false);
+  {
+    isOpen && (
+      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        {["한국어", "영어", "일본어"].map((lang) => (
+          <li
+            key={lang}
+            className="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-gray-900"
+            onClick={() => {
+              setSelected(lang);
+              setIsOpen(false);
+            }}
+          >
+            {lang}
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
     <div className="sm:col-span-2">
       <label
