@@ -1,10 +1,7 @@
 package com.ieum.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,11 +10,13 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@Data
 public class UserInterest {
     @Id
-    private String USERNAME;
+    private String USER_INTEREST_ID;
+
     @ElementCollection
-    @CollectionTable(name = "USER_INTEREST", joinColumns = @JoinColumn(name = "USERNAME"))
-    @Column(name = "USER_INTEREST")
+    @CollectionTable(name = "INTEREST_ID", joinColumns = @JoinColumn(name = "USERNAME"))
+    @Column(name = "INTEREST_ID")
     private List<String> INTEREST; // 관심사를 배열로 처리
 }

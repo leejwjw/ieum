@@ -1,26 +1,33 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { putOne } from "../../api/infoApi";
+// import { putOne } from "../../api/infoApi";
 import NationComponent from "../../components/info/NationComponent";
 import LangComponent from "../../components/info/LangComponent";
-import AddressComponent from "../../components/info/AddressComponent"; // 주소 입력 컴포넌트 추가
+import AddressComponent from "../../components/info/AddressComponent";
+import InterestModal from "../../components/info/InterestModal";
 import ChoiceComponent from "../../components/info/ChoiceComponent";
-import InterestModal from "../../components/info/InterestModal"; // 결과 모달
+import { getCookie } from "../../util/cookieUtil";
+
+const oldUserInfo = getCookie("user");
 
 const initState = {
   userName: "",
+  userNicName: "",
   nationName: "",
   lang: "",
   introduce: "",
   interest: [],
-  detailInter: "",
+  keyword: "",
+  isPublc: "",
+  isUser: "",
+  photoPath: "",
+  Status: "",
 };
 
 const MyInfo = () => {
   const [userInfo, setUserInfo] = useState({ ...initState });
-  const [result, setResult] = useState(null); // 결과 모달
-  const [errors, setErrors] = useState([]); // 에러 메시지 저장
-  const navigate = useNavigate(); // 페이지 전환을 위한 useNavigate 사용
+  const [result, setResult] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -30,64 +37,72 @@ const MyInfo = () => {
     });
   };
 
+  const handleInterestChange = (interests) => {
+    setUserInfo((prev) => ({ ...prev, interest: interests }));
+  };
+
+  const handleNationNameChange = (nation) => {
+    console.log("선택된 국가:", nation); // 여기서 국가 정보를 확인할 수 있음
+    setUserInfo((prev) => ({ ...prev, nationName: nation }));
+  };
+
+  const handleLangChange = (languages) => {
+    setUserInfo((prev) => ({ ...prev, lang: languages }));
+  };
+
   const handleClickSave = () => {
-    // 필수 항목 검증
-    const errorMessages = [];
+    const missingFields = [];
+    console.log(userInfo.keyword);
+    console.log(userInfo.interest);
+    console.log(userInfo.introduce);
 
-    if (!userInfo.nationName) errorMessages.push("국가를 선택해주세요.");
-    if (!userInfo.lang) errorMessages.push("언어를 선택해주세요.");
-    if (!userInfo.introduce) errorMessages.push("한 줄 소개를 입력해주세요.");
+    if (!userInfo.nationName) missingFields.push("국가를 선택해주세요.");
+    if (!userInfo.lang) missingFields.push("언어를 선택해주세요.");
+    if (!userInfo.introduce) missingFields.push("한 줄 소개를 입력해주세요.");
     if (userInfo.interest.length === 0)
-      errorMessages.push("최소 1개의 관심사를 선택해주세요.");
-    if (!userInfo.detailInter)
-      errorMessages.push("세부 관심사를 입력해주세요.");
+      missingFields.push("최소 1개의 관심사를 선택해주세요.");
+    if (!userInfo.keyword) missingFields.push("세부 관심사를 입력해주세요.");
 
-    if (errorMessages.length > 0) {
-      setErrors(errorMessages); // 에러 메시지 설정
+    if (missingFields.length > 0) {
+      alert(missingFields.join("\n"));
       return;
     }
-
+    console.log(userInfo);
     const formData = new FormData();
     formData.append("nationName", userInfo.nationName);
     formData.append("lang", userInfo.lang);
     formData.append("introduce", userInfo.introduce);
-    formData.append("interest", userInfo.interest.join(", ")); // interest 배열을 string으로 변환하여 전송
-    formData.append("detailInter", userInfo.detailInter);
+    formData.append("interest", userInfo.interest.join(", "));
+    formData.append("keyword", userInfo.keyword);
 
-    // API 호출
-    putOne("userName", formData)
-      .then((data) => {
-        console.log(data);
-        setResult("Save Success"); // 결과 표시
-      })
-      .catch((error) => {
-        console.error("Error saving data:", error);
-        setResult("Save Fail"); // 실패 시 결과 표시
-      });
+    // putOne("userName", formData)
+    //   .then(() => {
+    //     setResult("Save Success");
+    //   })
+    //   .catch(() => {
+    //     setResult("Save Fail");
+    //   });
   };
 
   const closeModal = () => {
-    setResult(null); // 모달 닫기
     if (result === "Save Success") {
-      navigate("/main"); // 저장 성공 시 /main으로 이동
+      navigate("/main");
     } else {
-      alert("저장 중 오류가 발생 했습니다. 다시 입력해 주세요.");
+      setResult(null);
     }
   };
 
   return (
     <>
-      {result && <InterestModal callbackFn={closeModal} />}
-
-      {/* 필수 항목 에러 메시지 표시 */}
-      {errors.length > 0 && (
-        <div className="bg-red-100 text-red-700 p-4 mb-4">
-          <ul>
-            {errors.map((error, index) => (
-              <li key={index}>{error}</li>
-            ))}
-          </ul>
-        </div>
+      {result && (
+        <InterestModal
+          message={
+            result === "Save Success"
+              ? "저장되었습니다."
+              : "저장에 실패했습니다."
+          }
+          callbackFn={closeModal}
+        />
       )}
 
       <div className="bg-white">
@@ -108,8 +123,14 @@ const MyInfo = () => {
 
                 <div className="border-b border-gray-900/10 pb-12">
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                    <NationComponent />
-                    <LangComponent />
+                    <NationComponent
+                      setSelectedCountry={userInfo.nationName}
+                      onNationNameChange={handleNationNameChange}
+                    />
+                    <LangComponent
+                      setSelectedCountry={userInfo.nationName}
+                      onLangChange={handleLangChange}
+                    />
                     <AddressComponent />
                     <div className="col-span-full">
                       <label
@@ -130,7 +151,6 @@ const MyInfo = () => {
                       </div>
                     </div>
 
-                    {/* ChoiceComponent에서 관심사 선택 */}
                     <div className="col-span-full">
                       <label
                         htmlFor="interest"
@@ -139,19 +159,14 @@ const MyInfo = () => {
                         관심사
                       </label>
                       <ChoiceComponent
-                        selectedInterests={userInfo.interest}
-                        onChange={(newInterests) => {
-                          setUserInfo({
-                            ...userInfo,
-                            interest: newInterests,
-                          });
-                        }}
+                        initialInterests={userInfo.interest}
+                        onInterestChange={handleInterestChange}
                       />
                     </div>
 
                     <div className="col-span-full">
                       <label
-                        htmlFor="detailInter"
+                        htmlFor="detailkeyword"
                         className="block text-lg font-medium text-gray-900 leading-6"
                       >
                         세부 관심사 설명
@@ -159,9 +174,9 @@ const MyInfo = () => {
                       <div className="mt-2">
                         <textarea
                           rows="5"
-                          name="detailInter"
-                          id="detailInter"
-                          value={userInfo.detailInter}
+                          name="keyword"
+                          id="keyword"
+                          value={userInfo.keyword}
                           onChange={handleChange}
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 sm:text-sm"
                         ></textarea>

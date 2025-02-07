@@ -1,19 +1,11 @@
 package com.ieum.controller;
 
 import com.ieum.domain.Room;
-import com.ieum.domain.RoomType;
-import com.ieum.dto.MsgDTO;
-import com.ieum.dto.ChatRoom;
 import com.ieum.repository.ChatRepository;
 import com.ieum.service.ChatService;
-import com.ieum.util.Util;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.socket.TextMessage;
-import org.springframework.web.socket.WebSocketSession;
 
 import java.util.List;
 

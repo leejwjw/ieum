@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -28,5 +29,8 @@ public class User {
     private LocalDateTime REG_DATE = LocalDateTime.now();
     @Enumerated(EnumType.STRING)
     private UserStatus STATUS;
+
+//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+//    private List<UserInterest> userInterests = new ArrayList<>();
 
 }

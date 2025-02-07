@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchCountries } from "../../api/infoApi"; // API 파일에서 import
 
-const NationComponent = () => {
+const NationComponent = ({ onNationNameChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countries, setCountries] = useState([]);
@@ -14,6 +14,7 @@ const NationComponent = () => {
       if (countryData.length > 0) {
         setCountries(countryData);
         setSelectedCountry(countryData[47]); // 기본값: 첫 번째 국가
+        onNationNameChange(countryData[47]); // 기본값: 상위 컴포넌트로 전달.
       }
     };
 
@@ -22,6 +23,9 @@ const NationComponent = () => {
 
   const handleSelectCountry = (country) => {
     setSelectedCountry(country);
+
+    // 상위 컴포넌트로 선택된 국가 객체를 전달.
+    onNationNameChange(country);
 
     setIsModalOpen(false);
   };
