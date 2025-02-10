@@ -16,7 +16,9 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -96,17 +98,25 @@ public class KakaoAuthService {
 
     // User 엔티티 -> UserDTO 변환 default 메서드
     public UserDTO entityToDTO(User user) {
+        // User의 관심사 리스트 (List<UserInterest>)를 관련된 Interest ID만 추출하여 리스트로 변환
+        List<Long> interestIds = user.getINTEREST().stream()
+                .map(userInterest -> userInterest.getInterest().getInterestId()) // InterestId 추출
+                .collect(Collectors.toList());
+
         UserDTO userDTO = new UserDTO(
-                user.getUSERNAME(),
+                user.getUsername(),
                 user.getNICK_NAME(),
                 user.getKEYWORD(),
                 user.getNATION_NAME(),
+                user.getADDRESS(),
                 user.getLANG(),
+                user.getINTRO(),
                 user.getIS_PUBLIC(),
                 user.getIS_USER(),
                 user.getPHOTO_PATH(),
                 user.getREG_DATE(),
-                String.valueOf(user.getSTATUS())
+                String.valueOf(user.getSTATUS()),
+                interestIds
         );
         return userDTO;
     }
@@ -119,7 +129,7 @@ public class KakaoAuthService {
     private User makeSocialUser(String email) {
         String nickName = "Social_" + email.split("@")[0]; // 이메일을 기반으로 임의 닉네임 생성
         User user = User.builder()
-                .USERNAME(email)
+                .username(email)
                 .NICK_NAME(nickName)
                 .IS_PUBLIC(true)
                 .STATUS(UserStatus.ACTIVE)

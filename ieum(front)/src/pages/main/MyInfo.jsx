@@ -7,21 +7,18 @@ import AddressComponent from "../../components/info/AddressComponent";
 import InterestModal from "../../components/info/InterestModal";
 import ChoiceComponent from "../../components/info/ChoiceComponent";
 import { getCookie } from "../../util/cookieUtil";
+import axios from "axios";
 
-const oldUserInfo = getCookie("user");
+const CookieUserInfo = getCookie("user");
+const username = CookieUserInfo.username;
 
 const initState = {
-  userName: "",
-  userNicName: "",
   nationName: "",
   lang: "",
-  introduce: "",
+  address: "",
+  intro: "",
   interest: [],
   keyword: "",
-  isPublc: "",
-  isUser: "",
-  photoPath: "",
-  Status: "",
 };
 
 const MyInfo = () => {
@@ -50,15 +47,16 @@ const MyInfo = () => {
     setUserInfo((prev) => ({ ...prev, lang: languages }));
   };
 
-  const handleClickSave = () => {
+  const handleClickSave = async () => {
     const missingFields = [];
+    console.log(username);
     console.log(userInfo.keyword);
     console.log(userInfo.interest);
-    console.log(userInfo.introduce);
+    console.log(userInfo.intro);
 
     if (!userInfo.nationName) missingFields.push("국가를 선택해주세요.");
     if (!userInfo.lang) missingFields.push("언어를 선택해주세요.");
-    if (!userInfo.introduce) missingFields.push("한 줄 소개를 입력해주세요.");
+    if (!userInfo.intro) missingFields.push("한 줄 소개를 입력해주세요.");
     if (userInfo.interest.length === 0)
       missingFields.push("최소 1개의 관심사를 선택해주세요.");
     if (!userInfo.keyword) missingFields.push("세부 관심사를 입력해주세요.");
@@ -67,21 +65,34 @@ const MyInfo = () => {
       alert(missingFields.join("\n"));
       return;
     }
-    console.log(userInfo);
-    const formData = new FormData();
-    formData.append("nationName", userInfo.nationName);
-    formData.append("lang", userInfo.lang);
-    formData.append("introduce", userInfo.introduce);
-    formData.append("interest", userInfo.interest.join(", "));
-    formData.append("keyword", userInfo.keyword);
 
-    // putOne("userName", formData)
-    //   .then(() => {
-    //     setResult("Save Success");
-    //   })
-    //   .catch(() => {
-    //     setResult("Save Fail");
-    //   });
+    // 서버로 데이터 전송
+    const formData = {
+      userName: CookieUserInfo.username,
+      nationName: userInfo.nationName,
+      lang: userInfo.lang,
+      address: userInfo.address,
+      intro: userInfo.intro,
+      interest: userInfo.interest.join(","),
+      keyword: userInfo.keyword,
+    };
+
+    try {
+      const response = await axios.post(
+        `http://localhost:8080/myinfo`,
+        formData
+      );
+
+      if (response.status === 200) {
+        console.log("저장 성공:", response.data);
+        setResult("Save Success");
+      } else {
+        throw new Error("서버 오류로 저장에 실패했습니다.");
+      }
+    } catch (error) {
+      console.error("저장 실패:", error);
+      setResult("Save Fail");
+    }
   };
 
   const closeModal = () => {
@@ -94,17 +105,7 @@ const MyInfo = () => {
 
   return (
     <>
-      {result && (
-        <InterestModal
-          message={
-            result === "Save Success"
-              ? "저장되었습니다."
-              : "저장에 실패했습니다."
-          }
-          callbackFn={closeModal}
-        />
-      )}
-
+      {result && <InterestModal callbackFn={closeModal} />}
       <div className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-10 lg:px-8">
           <div className="mx-auto max-w-2xl p-8">
@@ -134,7 +135,7 @@ const MyInfo = () => {
                     <AddressComponent />
                     <div className="col-span-full">
                       <label
-                        htmlFor="introduce"
+                        htmlFor="intro"
                         className="block text-lg font-medium text-gray-900 leading-6"
                       >
                         한 줄 소개
@@ -142,9 +143,9 @@ const MyInfo = () => {
                       <div className="mt-2">
                         <input
                           type="text"
-                          name="introduce"
-                          id="introduce"
-                          value={userInfo.introduce}
+                          name="intro"
+                          id="intro"
+                          value={userInfo.intro}
                           onChange={handleChange}
                           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 outline-gray-300 placeholder:text-gray-400 focus:outline-indigo-600 sm:text-sm"
                         />

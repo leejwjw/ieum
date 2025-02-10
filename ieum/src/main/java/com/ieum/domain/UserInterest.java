@@ -10,13 +10,26 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@Data
+@Getter
+@Setter
 public class UserInterest {
     @Id
-    private String USER_INTEREST_ID;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_interest_id")
+    private Long userInterestId;
 
-    @ElementCollection
-    @CollectionTable(name = "INTEREST_ID", joinColumns = @JoinColumn(name = "USERNAME"))
-    @Column(name = "INTEREST_ID")
-    private List<String> INTEREST; // 관심사를 배열로 처리
+    @Column(name ="icon_name")
+    private String iconName;
+    @Column(name = "icon_path")
+    private String iconPath;
+
+    // User와 연관 관계 설정 (username으로 Join됨)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "username", referencedColumnName = "USERNAME")
+    private User user; // 'user' 필드와 'USERNAME' 컬럼 연관
+
+    // Interest 엔티티와의 연관 관계
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "interest_id", referencedColumnName = "INTEREST_ID")
+    private Interest interest;
 }

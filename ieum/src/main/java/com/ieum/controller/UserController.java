@@ -1,10 +1,17 @@
 package com.ieum.controller;
 
 import com.ieum.domain.Nation;
+import com.ieum.domain.User;
+import com.ieum.dto.MyInfoDTO;
 import com.ieum.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -22,18 +29,13 @@ public class UserController {
         return userService.getAllNations();
     }
 
-//    @PostMapping("user/interest")
-//    public ResponseEntity<?> saveUserInterests(@RequestBody UserInterestDTO request) {
-//        userInterestService.saveUserInterests(request);
-//        return ResponseEntity.ok("User interests saved successfully.");
-//    }
-
-//    @PutMapping("/{username}/myInfo")
-//    public Nation get(@PathVariable String username, UserDTO userDTO) {
-//        log.info("get **** : {}", username);
-//        log.info("get **** : {}", userDTO);
-//
-//        userDTO.setUSERNAME(username);
-//        userDTO oldUserDTO = userService.getUser(username); // DB에 저장된 기존 회원 정보 조회
-//    }
+    @PostMapping("/myinfo")
+    public ResponseEntity<String> saveUser( @RequestBody MyInfoDTO myInfoDTO) {
+        try {
+            userService.saveMyInfo(myInfoDTO);
+            return ResponseEntity.ok("사용자 정보 및 관심사가 성공적으로 업데이트되었습니다.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("업데이트 실패: " + e.getMessage());
+        }
+    }
 }
