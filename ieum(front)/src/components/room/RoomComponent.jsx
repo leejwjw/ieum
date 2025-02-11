@@ -6,9 +6,11 @@ import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../common/FooterComponent";
 import ChatSideBarComponenet from "./ChatSideBarComponenet";
 import { getCookie } from "../../util/cookieUtil";
+
 const userInfo = getCookie("user");
 console.log(userInfo.lang);
 const userName = userInfo.username;
+
 const RoomComponent = () => {
   const { room_ID } = useParams();
   const [socket, setSocket] = useState(null);
@@ -19,15 +21,17 @@ const RoomComponent = () => {
   const [isOpen, setIsOpen] = useState(false);
 
   const languageOptions = [
-    { code: "kr", name: "한국어" },
+    { code: "ko", name: "한국어" },
     { code: "en", name: "영어" },
     { code: "ch", name: "중국어" },
+    { code: "ja", name: "일본어" },
   ];
 
   useEffect(() => {
     const fetchMessages = async () => {
       try {
         const data = await getMsgs(room_ID);
+        setSelectedLanguage(userInfo.lang);
         setMessages(data);
       } catch (error) {
         console.error("메시지 불러오기 실패:", error);
@@ -53,6 +57,10 @@ const RoomComponent = () => {
             messageType: "ENTER",
             username: userName,
             content: "채팅방에 접속했습니다.",
+            ko: "채팅방에 접속했습니다.",
+            ja: "チャットルームに接続しました。",
+            ch: "我连接了聊天室。",
+            en: "I've logged on to the chat room.",
             selectedLanguage: selectedLanguage,
             reg_date: new Date().toISOString().replace("T", " ").split(".")[0],
           })
@@ -64,9 +72,15 @@ const RoomComponent = () => {
     ws.onmessage = (event) => {
       try {
         const messageData = JSON.parse(event.data);
+
+        // 🚨 메시지에 번역된 언어(userInfo.lang)가 있으면 그것을 사용
+        messageData.content =
+          messageData.translatedMessage?.[userInfo.lang] || messageData.content; // 선택된 언어가 없으면 기본 content 사용
+
+        // 메시지 상태 업데이트
         setMessages((prevMessages) => [...prevMessages, messageData]);
       } catch (error) {
-        console.error("메시지오류:", error);
+        console.error("메시지 오류:", error);
       }
     };
 
@@ -83,7 +97,7 @@ const RoomComponent = () => {
     return () => {
       ws.close();
     };
-  }, []);
+  }, []); // 컴포넌트가 마운트될 때만 실행되도록 []
 
   // 메시지가 추가될 때 자동으로 스크롤 맨 아래로 이동
   useEffect(() => {
@@ -92,16 +106,16 @@ const RoomComponent = () => {
 
   const sendMessage = () => {
     if (socket && socket.readyState === WebSocket.OPEN) {
-      socket.send(
-        JSON.stringify({
-          room_ID: room_ID,
-          messageType: "TALK",
-          username: userName,
-          content: inputMessage,
-          selectedLanguage: selectedLanguage,
-          reg_date: new Date().toISOString().replace("T", " ").split(".")[0],
-        })
-      );
+      const messagePayload = {
+        room_ID: room_ID,
+        messageType: "TALK",
+        username: userName,
+        content: inputMessage,
+        selectedLanguage: selectedLanguage,
+        reg_date: new Date().toISOString().replace("T", " ").split(".")[0],
+      };
+
+      socket.send(JSON.stringify(messagePayload));
       setInputMessage("");
     } else {
       console.error("WebSocket 닫혀있음");
@@ -132,7 +146,10 @@ const RoomComponent = () => {
                       <div className="flex w-full mt-2 space-x-3 max-w-xs ml-auto justify-end">
                         <div>
                           <div className="bg-blue-600 text-white p-3 rounded-l-lg rounded-br-lg">
-                            <p className="text-sm">{msg[userInfo.lang]}</p>
+                            <p className="text-sm">
+                              {/* 번역된 메시지 표시 */}
+                              {msg.content}
+                            </p>
                           </div>
                           <span className="text-xs text-gray-500 leading-none">
                             {msg.reg_date}
@@ -157,7 +174,10 @@ const RoomComponent = () => {
                         </div>
                         <div>
                           <div className="bg-gray-100 p-3 rounded-r-lg rounded-bl-lg">
-                            <p className="text-sm">{msg[userInfo.lang]}</p>
+                            <p className="text-sm">
+                              {/* 번역된 메시지 표시 */}
+                              {msg.content}
+                            </p>
                           </div>
                           <span className="text-xs text-gray-500 leading-none">
                             {msg.reg_date}
@@ -167,7 +187,6 @@ const RoomComponent = () => {
                     )}
                   </li>
                 ))}
-
                 <div ref={messagesEndRef} />
               </ul>
             </div>

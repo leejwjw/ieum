@@ -1,5 +1,7 @@
 package com.ieum.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,6 +22,8 @@ public class UserInterest {
 
     @Column(name ="icon_name")
     private String iconName;
+
+
     @Column(name = "icon_path")
     private String iconPath;
 

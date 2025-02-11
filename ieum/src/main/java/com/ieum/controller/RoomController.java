@@ -6,6 +6,7 @@ package com.ieum.controller;
 import com.ieum.domain.Msg;
 import com.ieum.domain.Room;
 import com.ieum.domain.RoomType;
+import com.ieum.dto.RoomDTO;
 import com.ieum.service.MsgService;
 import com.ieum.service.RoomService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,11 +36,11 @@ public class RoomController {
         log.info("list^^^^^^^^^^  :{}", roomService.getMyRooms(userName));
         return roomService.getMyRooms(userName);
     }
-    @GetMapping("/openList")
-    public List<Room> openList() {
-        log.info("OPENLIST****  :{}", roomService.getAllOpenRooms());
-        return roomService.getAllOpenRooms();
+    @GetMapping("/listDetail/{userName}")
+    public List<RoomDTO> listDetail(@PathVariable("userName") String userName) {
+        return roomService.getRoomDetailsByUserName(userName);
     }
+
 
     @GetMapping("/msgs/{room_ID}")
     public List<Msg> getMsgs(@PathVariable("room_ID") Long roomId, HttpServletRequest request) {

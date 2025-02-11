@@ -5,6 +5,7 @@ import lombok.*;
 
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -31,6 +32,7 @@ public class MsgDTO {
     private String CH;
     private Status STATUS;
     private String selectedLanguage;
+    private Map<String, String> translatedMessage;
 
     private String reg_date;
 

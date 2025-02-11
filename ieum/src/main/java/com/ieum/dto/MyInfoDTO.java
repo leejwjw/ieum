@@ -15,6 +15,7 @@ public class MyInfoDTO {
     private String LANG;
     private String ADDRESS;
     private String INTRO;
+
     private String INTEREST;
     private String KEYWORD;
 }

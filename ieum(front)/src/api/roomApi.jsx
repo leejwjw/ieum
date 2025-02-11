@@ -19,10 +19,10 @@ export const getList = async (userName) => {
     throw error;
   }
 };
-export const getOpenRoomList = async () => {
+export const getListDetail = async (userName) => {
   try {
     const result = await axios.get(
-      `http://localhost:8080/room/openList`,
+      `http://localhost:8080/room/listDetail/${userName}`,
       header
     );
     return result.data;

@@ -81,4 +81,9 @@ public class UserService {
             userInterestRepository.save(userInterest);
         }
     }
+
+    public List<UserInterest> getMyInterests(String userName) {
+        return userInterestRepository.getMyInterests(userName);
+    }
+
 }
