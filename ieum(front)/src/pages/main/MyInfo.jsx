@@ -8,6 +8,7 @@ import InterestModal from "../../components/info/InterestModal";
 import ChoiceComponent from "../../components/info/ChoiceComponent";
 import { getCookie } from "../../util/cookieUtil";
 import axios from "axios";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 
 const CookieUserInfo = getCookie("user");
 const username = CookieUserInfo.username;
@@ -25,6 +26,12 @@ const MyInfo = () => {
   const [userInfo, setUserInfo] = useState({ ...initState });
   const [result, setResult] = useState(null);
   const navigate = useNavigate();
+  const header = {
+    headers: {
+      Authorization: `Bearer ${CookieUserInfo.accessToken}`,
+      "Content-Type": "application/json",
+    },
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -46,6 +53,11 @@ const MyInfo = () => {
   const handleLangChange = (languages) => {
     setUserInfo((prev) => ({ ...prev, lang: languages }));
   };
+  const handleAddressChange = (addr) => {
+    console.log("상위 컴포넌트로 넘어온: ", addr);
+    setUserInfo((prev) => ({ ...prev, address: addr }));
+    console.log("저장된 주소: ", setUserInfo);
+  };
 
   const handleClickSave = async () => {
     const missingFields = [];
@@ -57,6 +69,7 @@ const MyInfo = () => {
     if (!userInfo.nationName) missingFields.push("국가를 선택해주세요.");
     if (!userInfo.lang) missingFields.push("언어를 선택해주세요.");
     if (!userInfo.intro) missingFields.push("한 줄 소개를 입력해주세요.");
+    if (!userInfo.intro) missingFields.push("한 줄 소개를 입력해주세요.");
     if (userInfo.interest.length === 0)
       missingFields.push("최소 1개의 관심사를 선택해주세요.");
     if (!userInfo.keyword) missingFields.push("세부 관심사를 입력해주세요.");
@@ -67,20 +80,29 @@ const MyInfo = () => {
     }
 
     // 서버로 데이터 전송
+
+    const nationCode = userInfo.nationName.nation_NAME;
+
     const formData = {
-      userName: CookieUserInfo.username,
-      nationName: userInfo.nationName,
+      userName: username,
       lang: userInfo.lang,
       address: userInfo.address,
       intro: userInfo.intro,
       interest: userInfo.interest.join(","),
       keyword: userInfo.keyword,
+      nationName: nationCode,
     };
+
+    console.log("nationCode", nationCode);
+    console.log("address", userInfo.address);
+
+    console.log("서버로 전송되는 데이터:", formData);
 
     try {
       const response = await axios.post(
-        `http://localhost:8080/myinfo`,
-        formData
+        `${API_SERVER_HOST}/user/${username}/myinfo`,
+        formData,
+        header
       );
 
       if (response.status === 200) {
@@ -125,14 +147,10 @@ const MyInfo = () => {
                 <div className="border-b border-gray-900/10 pb-12">
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <NationComponent
-                      setSelectedCountry={userInfo.nationName}
                       onNationNameChange={handleNationNameChange}
                     />
-                    <LangComponent
-                      setSelectedCountry={userInfo.nationName}
-                      onLangChange={handleLangChange}
-                    />
-                    <AddressComponent />
+                    <LangComponent onLangChange={handleLangChange} />
+                    <AddressComponent onAddressChange={handleAddressChange} />
                     <div className="col-span-full">
                       <label
                         htmlFor="intro"
@@ -155,12 +173,11 @@ const MyInfo = () => {
                     <div className="col-span-full">
                       <label
                         htmlFor="interest"
-                        className="block text-lg font-medium text-gray-900 leading-6"
+                        className="block text-lg font-medium text-gray-900 leading-6 mb-2"
                       >
                         관심사
                       </label>
                       <ChoiceComponent
-                        initialInterests={userInfo.interest}
                         onInterestChange={handleInterestChange}
                       />
                     </div>

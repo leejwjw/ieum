@@ -3,6 +3,7 @@ import { useState } from "react";
 const languageOptions = [
   { code: "kr", name: "한국어" },
   { code: "en", name: "영어" },
+  { code: "ja", name: "일본어" },
   { code: "ch", name: "중국어" },
 ];
 
@@ -70,8 +71,8 @@ const LangComponent = ({ onLangChange }) => {
                   key={lang.code}
                   className="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-gray-900"
                   onClick={() => {
-                    setSelected(lang.code);
                     onLangChange(lang.code);
+                    setSelected(lang.code);
                     setIsOpen(false);
                   }}
                 >

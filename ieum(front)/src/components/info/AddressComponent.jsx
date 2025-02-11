@@ -1,13 +1,15 @@
 import { useState } from "react";
 import DaumPostcode from "react-daum-postcode";
 
-const AddressComponent = () => {
+const AddressComponent = ({ onAddressChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState("");
 
   const handleComplete = (data) => {
     setAddress(data.address); // 선택한 주소 저장
+    console.log("address 컴포넌트에서 선택한 주소", data.address);
     setIsOpen(false); // 모달 닫기
+    onAddressChange(data.address);
   };
 
   return (

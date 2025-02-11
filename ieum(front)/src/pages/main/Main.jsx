@@ -2,9 +2,14 @@ import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../../components/common/FooterComponent";
 import { getOpenRoomList } from "../../api/roomApi";
 import { useEffect, useState } from "react";
+import jwtAxios from "../../util/jwtUtil";
+import { getCookie } from "../../util/cookieUtil";
 
 const Main = () => {
   const [rooms, setRooms] = useState([]);
+  const [interests, setInterests] = useState([]);
+
+  const userinfo = getCookie("user");
 
   useEffect(() => {
     const fetchRooms = async () => {
@@ -17,6 +22,27 @@ const Main = () => {
     };
 
     fetchRooms();
+  }, []);
+
+  // 관심사 데이터 가져오기
+  useEffect(() => {
+    const fetchInterests = async () => {
+      try {
+        const response = await jwtAxios.get(
+          "http://localhost:8080/user/interests",
+          {
+            params: {
+              username: userinfo.username, // 사용자 이름
+            },
+          }
+        );
+        setInterests(response.data); // 관심사 데이터를 상태로 저장
+      } catch (error) {
+        console.error("Error fetching interests:", error);
+      }
+    };
+
+    fetchInterests();
   }, []);
   return (
     <>
@@ -183,8 +209,9 @@ const Main = () => {
             </div>
             <div className="grid gap-8 lg:grid-cols-2">
               <div className="col-span-full text-center">
-                <div className="mt-2">
+                {interests.map((interest) => (
                   <button
+                    key={interest.interestId} // 유니크 키 값 설정
                     type="button"
                     className="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-700 rounded-lg hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
                   >
@@ -194,52 +221,12 @@ const Main = () => {
                       fill="currentColor"
                       className="size-5"
                     >
-                      <path
-                        fillRule="evenodd"
-                        d="M.676 6.941A12.964 12.964 0 0 1 10 3c3.657 0 6.963 1.511 9.324 3.941a.75.75 0 0 1-.008 1.053l-.353.354a.75.75 0 0 1-1.069-.008C15.894 6.28 13.097 5 10 5 6.903 5 4.106 6.28 2.106 8.34a.75.75 0 0 1-1.069.008l-.353-.354a.75.75 0 0 1-.008-1.053Zm2.825 2.833A8.976 8.976 0 0 1 10 7a8.976 8.976 0 0 1 6.499 2.774.75.75 0 0 1-.011 1.049l-.354.354a.75.75 0 0 1-1.072-.012A6.978 6.978 0 0 0 10 9c-1.99 0-3.786.83-5.061 2.165a.75.75 0 0 1-1.073.012l-.354-.354a.75.75 0 0 1-.01-1.05Zm2.82 2.84A4.989 4.989 0 0 1 10 11c1.456 0 2.767.623 3.68 1.614a.75.75 0 0 1-.022 1.039l-.354.354a.75.75 0 0 1-1.085-.026A2.99 2.99 0 0 0 10 13c-.88 0-1.67.377-2.22.981a.75.75 0 0 1-1.084.026l-.354-.354a.75.75 0 0 1-.021-1.039Zm2.795 2.752a1.248 1.248 0 0 1 1.768 0 .75.75 0 0 1 0 1.06l-.354.354a.75.75 0 0 1-1.06 0l-.354-.353a.75.75 0 0 1 0-1.06Z"
-                        clipRule="evenodd"
-                      />
+                      {/* 아이콘 데이터 기반으로 설정 가능 */}
+                      <path d={interest.iconPath} />
                     </svg>
-                    수다
+                    {interest.iconName} {/* 관심사 이름 표시 */}
                   </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-red-900 rounded-lg hover:text-white border border-red-800 hover:bg-red-900 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm text-center me-2 mb-2 dark:border-red-600 dark:text-red-400 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-800"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="size-5"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M13.5 4.938a7 7 0 1 1-9.006 1.737c.202-.257.59-.218.793.039.278.352.594.672.943.954.332.269.786-.049.773-.476a5.977 5.977 0 0 1 .572-2.759 6.026 6.026 0 0 1 2.486-2.665c.247-.14.55-.016.677.238A6.967 6.967 0 0 0 13.5 4.938ZM14 12a4 4 0 0 1-4 4c-1.913 0-3.52-1.398-3.91-3.182-.093-.429.44-.643.814-.413a4.043 4.043 0 0 0 1.601.564c.303.038.531-.24.51-.544a5.975 5.975 0 0 1 1.315-4.192.447.447 0 0 1 .431-.16A4.001 4.001 0 0 1 14 12Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    운동/건강
-                  </button>
-                  <button
-                    type="button"
-                    className="inline-flex items-center px-3 py-2 text-xs font-medium text-green-700 rounded-lg hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm text-center me-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800"
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      className="size-5"
-                    >
-                      <path d="M10.75 10.818v2.614A3.13 3.13 0 0 0 11.888 13c.482-.315.612-.648.612-.875 0-.227-.13-.56-.612-.875a3.13 3.13 0 0 0-1.138-.432ZM8.33 8.62c.053.055.115.11.184.164.208.16.46.284.736.363V6.603a2.45 2.45 0 0 0-.35.13c-.14.065-.27.143-.386.233-.377.292-.514.627-.514.909 0 .184.058.39.202.592.037.051.08.102.128.152Z" />
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-6a.75.75 0 0 1 .75.75v.316a3.78 3.78 0 0 1 1.653.713c.426.33.744.74.925 1.2a.75.75 0 0 1-1.395.55 1.35 1.35 0 0 0-.447-.563 2.187 2.187 0 0 0-.736-.363V9.3c.698.093 1.383.32 1.959.696.787.514 1.29 1.27 1.29 2.13 0 .86-.504 1.616-1.29 2.13-.576.377-1.261.603-1.96.696v.299a.75.75 0 1 1-1.5 0v-.3c-.697-.092-1.382-.318-1.958-.695-.482-.315-.857-.717-1.078-1.188a.75.75 0 1 1 1.359-.636c.08.173.245.376.54.569.313.205.706.353 1.138.432v-2.748a3.782 3.782 0 0 1-1.653-.713C6.9 9.433 6.5 8.681 6.5 7.875c0-.805.4-1.558 1.097-2.096a3.78 3.78 0 0 1 1.653-.713V4.75A.75.75 0 0 1 10 4Z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    재태크
-                  </button>
-                </div>
+                ))}
               </div>
             </div>
             {/* <div className="grid gap-8 lg:grid-cols-2 h-px-600">
