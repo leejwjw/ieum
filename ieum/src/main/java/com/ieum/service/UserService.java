@@ -4,6 +4,7 @@ import com.ieum.domain.Interest;
 import com.ieum.domain.Nation;
 import com.ieum.domain.User;
 import com.ieum.domain.UserInterest;
+import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
 import com.ieum.repository.InterestRepository;
 import com.ieum.repository.NationRepository;
@@ -48,7 +49,7 @@ public class UserService {
         user.setKEYWORD(myInfoDTO.getKEYWORD());
         userRepository.save(user);
 
-        // (필요에 따라 기존의 UserInterest 삭제 처리 가능)
+        // (필요에 따라 기존의 UserInterest 삭제 처리 가능) 하지만 처음 등록이기에 삭제할게 없다 판단.
         // 예: userInterestRepository.deleteByUser(user);
 
         // 3. 전달받은 interest String을 쉼표로 분리하여 처리 ("1,2,3" → {"1", "2", "3"})
@@ -86,4 +87,9 @@ public class UserService {
         return userInterestRepository.getMyInterests(userName);
     }
 
+
+    @Transactional
+    public void modifyUser(ModifyDTO modifyDTO) {
+
+    }
 }

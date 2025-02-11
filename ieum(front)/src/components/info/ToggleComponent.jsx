@@ -1,22 +1,20 @@
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import "../../assets/CustomToast.css";
 
-const ToggleSwitch = ({ initialValue = true, onToggle }) => {
+const ToggleSwitch = ({ initialValue = true, onToggleChange }) => {
   const [isPublic, setIsPublic] = useState(initialValue);
 
   const handleChange = () => {
-    const newState = !isPublic;
-    setIsPublic(newState);
-    toast(`상태가 ${newState ? "전체공개" : "비공개"}로 변경되었습니다.`, {
-      className: "toast-alert", // 토스트에 custom class 적용
-      // 필요하면 아이콘 등을 추가할 수 있습니다.
-    });
-    if (onToggle) {
-      onToggle(newState);
+    const newValue = !isPublic;
+    setIsPublic(newValue);
+    // 토스트 알림 표시 (상태값에 따라 메시지 변경)
+    toast(`${newValue ? "전체공개" : "비공개"}로 변경되었습니다.`);
+    if (onToggleChange) {
+      onToggleChange(newValue);
     }
   };
+
   return (
     <>
       <ToastContainer
@@ -39,7 +37,7 @@ const ToggleSwitch = ({ initialValue = true, onToggle }) => {
             onChange={handleChange}
           />
           <div
-            className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-1 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 
+            className="relative w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-0 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-700 
           peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full 
           peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:start-[2px] 
           after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all 

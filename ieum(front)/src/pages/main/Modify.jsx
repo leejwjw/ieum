@@ -15,9 +15,10 @@ const CookieUserInfo = getCookie("user");
 const username = CookieUserInfo.username;
 
 const initState = {
-  nationName: "",
   photoPath: "",
-  lang: "",
+  isPublic: true,
+  nationName: "",
+  lang: "kr",
   address: "",
   nickname: "",
   intro: "",
@@ -58,10 +59,19 @@ const Modify = () => {
   const handleLangChange = (languages) => {
     setUserInfo((prev) => ({ ...prev, lang: languages }));
   };
+
   const handleAddressChange = (addr) => {
     console.log("상위 컴포넌트로 넘어온: ", addr);
     setUserInfo((prev) => ({ ...prev, address: addr }));
     console.log("저장된 주소: ", setUserInfo);
+  };
+
+  const handleToggleChange = (isPublic) => {
+    console.log("공개 상태 변경:", isPublic);
+    setUserInfo((prev) => ({ ...prev, isPublic: isPublic }));
+  };
+  const handlePhotoChange = (photo) => {
+    setUserInfo((prev) => ({ ...prev, photoPath: photo }));
   };
 
   const handleClickSave = async () => {
@@ -87,6 +97,7 @@ const Modify = () => {
     const formData = {
       userName: username,
       photoPath: userInfo.photoPath,
+      isPublic: userInfo.isPublic,
       nationName: nationCode,
       lang: userInfo.lang,
       address: userInfo.address,
@@ -95,9 +106,6 @@ const Modify = () => {
       interest: userInfo.interest.join(","),
       keyword: userInfo.keyword,
     };
-
-    console.log("nationCode", nationCode);
-    console.log("address", userInfo.address);
 
     console.log("서버로 전송되는 데이터:", formData);
 
@@ -147,8 +155,8 @@ const Modify = () => {
                 </div>
 
                 <div className="border-b border-gray-900/10 pb-12">
-                  <PhotoComponent />
-                  <ToggleComponent />
+                  <PhotoComponent onPhotoChange={handlePhotoChange} />
+                  <ToggleComponent onToggleChange={handleToggleChange} />
                   <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                     <NationComponent
                       onNationNameChange={handleNationNameChange}

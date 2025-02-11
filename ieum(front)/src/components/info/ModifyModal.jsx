@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-const ModifyModal = () => {
+const ModifyModal = ({ callbackFn }) => {
   const [isModalOpen, setIsModalOpen] = useState(true);
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+    callbackFn();
   };
 
   return (
