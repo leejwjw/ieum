@@ -35,8 +35,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return;
         }
 
-
-
         log.info("*********** JWTCheckFilter - doFilterInternal");
 
         String authHeaderValue = request.getHeader("Authorization");

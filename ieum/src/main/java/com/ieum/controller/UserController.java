@@ -1,17 +1,17 @@
 package com.ieum.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ieum.domain.Nation;
 import com.ieum.domain.UserInterest;
 import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
 import com.ieum.dto.UserDTO;
-import com.ieum.dto.UserInterestDTO;
 import com.ieum.service.UserService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -39,29 +39,40 @@ public class UserController {
         }
     }
     @GetMapping("/interest/{username}")
-    public List<UserInterestDTO> getMyInterest (@PathVariable String username) {
-        List<UserInterestDTO> userInterestDTOList = userService.getMyInterests(username).stream()
-                .map(userInterest -> new UserInterestDTO(
-                        userInterest.getUserInterestId(),
-                        userInterest.getInterest().getInterestId(),
-                        userInterest.getUser().getUsername(),
-                        userInterest.getIconName(),
-                        userInterest.getIconPath()
-                ))
-                .toList();
-        return userInterestDTOList;
+    public List<UserInterest> getMyInterest (@PathVariable String username) {
+        log.info("관심사 수 : {}",userService.getMyInterests(username).size());
+        for (UserInterest userInterest : userService.getMyInterests(username)) {
+            log.info(userInterest.getInterest().toString());
+        }
+
+        return userService.getMyInterests(username);
     }
 
+    @PutMapping("/{username}/modify")
+    public ResponseEntity<?> modifyUser(
+            @PathVariable String username,
+            @RequestPart(value = "file", required = false) MultipartFile file, // 파일은 optional
+            @RequestPart("data") String data) { // JSON 데이터를 ModifyDTO로 매핑
+        try {
+            // JSON 데이터 파싱
+            ObjectMapper objectMapper = new ObjectMapper();
+            ModifyDTO modifyDTO = objectMapper.readValue(data, ModifyDTO.class);
 
-    @GetMapping("list/{userInterestId}")
-    public List<UserDTO> getUserInterest(@PathVariable Long userInterestId) {
-        log.info("%%%%%%%%%%% {}", userService.getUserByInterest(userInterestId));
-        return userService.getUserByInterest(userInterestId);
+            // 서비스 계층에서 파일과 데이터를 처리
+            userService.modifyUser(file, modifyDTO);
+            return ResponseEntity.ok("사용자 정보 수정 성공");
+        } catch (Exception e) {
+            // 에러 메시지 포함 반환
+            return ResponseEntity.badRequest().body("업데이트 실패: " + e.getMessage());
+        }
     }
-    @GetMapping("search/{searchTerm}")
-    public List<UserDTO> searchUser(@PathVariable String searchTerm) {
-        log.info("searchRESULT : {}", userService.getUsersBySearchTerm(searchTerm));
 
-        return userService.getUsersBySearchTerm(searchTerm);
+    @GetMapping("/{username}/getUserInfo")
+    public UserDTO getUserInfo(@PathVariable String username) {
+        UserDTO userDTO = userService.getUsername(username);
+        return userDTO;
     }
 }
+
+//    @GetMapping("/{username}/profile")
+//    public ResponseEntity<?> getMyProfile(@PathVariable String username) {

@@ -1,6 +1,7 @@
 import { useState } from "react";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 
-const PhotoComponent = ({ onPhotoChange }) => {
+const PhotoComponent = ({ olduser, onPhotoChange }) => {
   const defaultPhoto =
     "https://plus.unsplash.com/premium_photo-1730828573938-003e14f210f4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
   const [photo, setPhoto] = useState(defaultPhoto);
@@ -14,10 +15,6 @@ const PhotoComponent = ({ onPhotoChange }) => {
         setPhoto(reader.result);
       };
       reader.readAsDataURL(file);
-
-      // 선택된 파일 객체를 부모 컴포넌트에 전달
-      // 부모에서는 이 파일 객체를 FormData에 담아 백엔드 API로 전송하면,
-      // 백엔드에서 Public/profile에 저장하는 로직(기존 이미지 삭제, 암호화 등)을 수행할 수 있음.
       onPhotoChange(file);
     }
   };
@@ -30,7 +27,7 @@ const PhotoComponent = ({ onPhotoChange }) => {
             <div className="flex flex-shrink-0 -space-x-8 space-y-20 rtl:space-x-reverse">
               <img
                 className="w-[150px] h-[150px] rounded-full"
-                src={photo}
+                // src={`${API_SERVER_HOST}/user/${}`}
                 alt="Uploaded Preview"
               />
             </div>

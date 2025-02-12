@@ -2,7 +2,7 @@ import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const ToggleSwitch = ({ initialValue = true, onToggleChange }) => {
+const ToggleSwitch = ({ olduser, initialValue = true, onToggleChange }) => {
   const [isPublic, setIsPublic] = useState(initialValue);
 
   const handleChange = () => {

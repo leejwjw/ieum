@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { fetchCountries } from "../../api/infoApi"; // API 파일에서 import
 
-const NationComponent = ({ onNationNameChange }) => {
+const NationComponent = ({ olduser, onNationNameChange }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(null);
   const [countries, setCountries] = useState([]);

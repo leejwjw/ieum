@@ -7,7 +7,7 @@ const languageOptions = [
   { code: "ch", name: "중국어" },
 ];
 
-const LangComponent = ({ onLangChange }) => {
+const LangComponent = ({ olduser, onLangChange }) => {
   const [selected, setSelected] = useState("ko");
   const [isOpen, setIsOpen] = useState(false);
   {
