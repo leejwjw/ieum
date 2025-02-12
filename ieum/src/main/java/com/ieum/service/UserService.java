@@ -12,10 +12,13 @@ import com.ieum.repository.NationRepository;
 import com.ieum.repository.UserInterestRepository;
 import com.ieum.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +44,9 @@ public class UserService {
     private final UserInterestRepository userInterestRepository;
     private final InterestRepository interestRepository;
     private final KakaoAuthService kakaoAuthService;
+
+    @Value("${ieum.upload.path}")
+    private String uploadPath;
 
     public List<Nation> getAllNations() {
         return nationRepository.findAll();
@@ -195,7 +201,23 @@ public class UserService {
         return UUID.randomUUID().toString();
     }
 
-//    public UserDTO getUserprofile(String username){
-//    }
+
+
+    // 파일 정보 리턴 -> 이미지 브라우저에 보여주기 위한 파일리소스 get메서드
+    public ResponseEntity<Resource> getFile(String fileName) {
+        Resource resource = new FileSystemResource(uploadPath + File.separator + fileName);
+        if(!resource.isReadable()) {
+            resource = new FileSystemResource(uploadPath + File.separator + "default.jpg");
+        }
+
+        HttpHeaders headers = new HttpHeaders();
+        try {
+            headers.add("Content-Type", Files.probeContentType(resource.getFile().toPath()));
+        } catch (IOException e) {
+            return ResponseEntity.internalServerError().build();
+        }
+
+        return ResponseEntity.ok().headers(headers).body(resource);
+    }
 }
 

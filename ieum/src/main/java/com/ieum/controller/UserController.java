@@ -7,8 +7,10 @@ import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
 import com.ieum.dto.UserDTO;
 import com.ieum.service.UserService;
+import com.ieum.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,6 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FileUtil fileUtil;
 
 
     @GetMapping("/getNations")
@@ -72,7 +75,10 @@ public class UserController {
         UserDTO userDTO = userService.getUsername(username);
         return userDTO;
     }
-}
 
-//    @GetMapping("/{username}/profile")
-//    public ResponseEntity<?> getMyProfile(@PathVariable String username) {
+    @GetMapping("/view/{potoPath}")
+    public ResponseEntity<Resource> getFilename(@PathVariable String potoPath) {
+        log.info("potoPath: {}", potoPath);
+        return userService.getFile(potoPath);
+    }
+}

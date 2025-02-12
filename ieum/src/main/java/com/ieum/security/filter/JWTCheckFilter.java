@@ -15,10 +15,28 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 @Slf4j
 public class JWTCheckFilter extends OncePerRequestFilter {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+
+        // preflight 제외
+        if(request.getMethod().equals("OPTIONS")){
+            return true;
+        }
+
+        String requestURI = request.getRequestURI();
+
+        // 이미지 조회 경로 체크 제외
+        if(requestURI.startsWith("/user/view/")) {
+            return true;
+        }
+        return false;
+    }
+
     // 필터링 메서드 : 오버라이딩 필수
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

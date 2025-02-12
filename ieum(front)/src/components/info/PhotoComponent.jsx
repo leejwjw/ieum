@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { API_SERVER_HOST } from "../../api/kakaoApi";
 
-const PhotoComponent = ({ olduser, onPhotoChange }) => {
-  const defaultPhoto =
-    "https://plus.unsplash.com/premium_photo-1730828573938-003e14f210f4?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
-  const [photo, setPhoto] = useState(defaultPhoto);
+const PhotoComponent = ({ header, olduser, onPhotoChange }) => {
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
+  const [photo, setPhoto] = useState();
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -27,8 +26,9 @@ const PhotoComponent = ({ olduser, onPhotoChange }) => {
             <div className="flex flex-shrink-0 -space-x-8 space-y-20 rtl:space-x-reverse">
               <img
                 className="w-[150px] h-[150px] rounded-full"
-                // src={`${API_SERVER_HOST}/user/${}`}
+                src={photo || `${API_SERVER_HOST}/user/view/${olduser.photo_PATH}`}
                 alt="Uploaded Preview"
+                onError={(e) => { e.target.src = defaultPhotoUrl; }}
               />
             </div>
           </div>

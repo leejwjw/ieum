@@ -198,6 +198,7 @@ const Modify = () => {
                 <div className="border-b border-gray-900/10 pb-12">
                   <PhotoComponent
                     olduser={olduser}
+                    header = {header}
                     onPhotoChange={handlePhotoChange}
                   />
                   <ToggleComponent
