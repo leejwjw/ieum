@@ -13,6 +13,7 @@ const Setting = lazy(() => import("../pages/main/Setting"));
 const Faq = lazy(() => import("../pages/main/Faq"));
 const RoomComponent = lazy(() => import("../components/room/RoomComponent"));
 const RoomListPage = lazy(() => import("../pages/room/RoomListPage"));
+const SearchResultPage = lazy(() => import("../pages/main/SearchResultPage"));
 
 const Router = () => {
   return useRoutes([
@@ -108,6 +109,16 @@ const Router = () => {
         <PrivateRoute>
           <Suspense fallback={<LoadingPage />}>
             <Faq />
+          </Suspense>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/user/search/:searchTerm",
+      element: (
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <SearchResultPage />
           </Suspense>
         </PrivateRoute>
       ),

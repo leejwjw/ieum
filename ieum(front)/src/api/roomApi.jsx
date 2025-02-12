@@ -45,26 +45,19 @@ export const getMsgs = async (room_ID) => {
     throw error;
   }
 };
-export const createRoom = async (name) => {
-  const result = await axios.post(`http://localhost:8080/room/create`, {
-    name,
-  });
-  return result.data;
-};
-export const createOpenRoom = async (roomData) => {
-  console.log(roomData);
+export const createRoom = async ({ user1, user2 }) => {
   try {
-    const header = {
-      headers: { Authorization: `Bearer ${userToken}` },
-    };
     const result = await axios.post(
-      "http://localhost:8080/room/createOpen",
-      roomData,
+      "http://localhost:8080/room/create",
+      {
+        user1,
+        user2,
+      },
       header
     );
     return result.data;
   } catch (error) {
-    console.error("오픈 채팅방 생성 오류:", error);
+    console.error("채팅방 생성 오류:", error);
     throw error;
   }
 };

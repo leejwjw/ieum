@@ -4,7 +4,10 @@ import com.ieum.domain.Nation;
 import com.ieum.domain.UserInterest;
 import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
+import com.ieum.dto.UserDTO;
+import com.ieum.dto.UserInterestDTO;
 import com.ieum.service.UserService;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -36,11 +39,29 @@ public class UserController {
         }
     }
     @GetMapping("/interest/{username}")
-    public List<UserInterest> getMyInterest (@PathVariable String username) {
-        log.info("관심사 수 : {}",userService.getMyInterests(username).size());
-//        for (UserInterest userInterest : userService.getMyInterests(username)) {
-//            log.info(userInterest.getInterest().toString());
-//        }
-        return userService.getMyInterests(username);
+    public List<UserInterestDTO> getMyInterest (@PathVariable String username) {
+        List<UserInterestDTO> userInterestDTOList = userService.getMyInterests(username).stream()
+                .map(userInterest -> new UserInterestDTO(
+                        userInterest.getUserInterestId(),
+                        userInterest.getInterest().getInterestId(),
+                        userInterest.getUser().getUsername(),
+                        userInterest.getIconName(),
+                        userInterest.getIconPath()
+                ))
+                .toList();
+        return userInterestDTOList;
+    }
+
+
+    @GetMapping("list/{userInterestId}")
+    public List<UserDTO> getUserInterest(@PathVariable Long userInterestId) {
+        log.info("%%%%%%%%%%% {}", userService.getUserByInterest(userInterestId));
+        return userService.getUserByInterest(userInterestId);
+    }
+    @GetMapping("search/{searchTerm}")
+    public List<UserDTO> searchUser(@PathVariable String searchTerm) {
+        log.info("searchRESULT : {}", userService.getUsersBySearchTerm(searchTerm));
+
+        return userService.getUsersBySearchTerm(searchTerm);
     }
 }

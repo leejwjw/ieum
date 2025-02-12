@@ -1,43 +1,48 @@
 import { useEffect, useState } from "react";
 import { getCookie } from "../../util/cookieUtil";
 import { fetchInterest } from "../../api/mainApi";
+import MainUserComponent from "./MainUserComponent";
 
 const InterestComponent = () => {
   const [interests, setInterests] = useState([]);
+  const [selectedInterestId, setSelectedInterestId] = useState(null); // 선택된 관심사 ID
 
   const userInfo = getCookie("user");
   const userName = userInfo?.username; // userInfo가 null일 가능성을 대비
 
   useEffect(() => {
-    if (!userName) return; // userName이 없으면 요청하지 않음
+    if (!userName) return;
 
     const loadUserInterests = async () => {
       const userInterests = await fetchInterest(userName);
       console.log("불러온 관심 데이터:", userInterests);
 
-      setInterests(userInterests); // 관심사 데이터 업데이트
+      setSelectedInterestId(userInterests[0].interestId);
+
+      setInterests([...userInterests]); // 배열 복사하여 상태 업데이트
     };
 
     loadUserInterests();
-  }, [userName]); // userName이 변경될 때마다 실행
-
+  }, [userName]); // userName이 변경될 때 실행
+  console.log(selectedInterestId);
   return (
     <div className="container mx-auto">
-      <section className="">
+      <section>
         <div className="grid gap-8 lg:grid-cols-2">
           <div className="col-span-full text-center">
-            <p className="mt-8 text-lg font-medium text-pretty text-gray-500 mr-8 ml-8 sm:text-xl/8">
-              같은 관심사의 회원들
+            <p className="mt-8 text-lg font-medium text-gray-500 sm:text-xl">
+              🌟 같은 관심사의 회원들 🌟
             </p>
           </div>
         </div>
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-8 lg:grid-cols-2 my-[30px]">
           <div className="col-span-full text-center">
             {interests.map((interest) => (
               <button
-                key={interest.userInterestId} // userInterestId 사용
+                key={interest.userInterestId}
                 type="button"
-                className="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-700 rounded-lg hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                className="inline-flex items-center px-3 py-2 text-xs font-medium text-blue-500 rounded-lg hover:text-white border border-blue-500 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+                onClick={() => setSelectedInterestId(interest.interestId)} // 클릭 시 선택된 ID 설정
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -53,6 +58,10 @@ const InterestComponent = () => {
           </div>
         </div>
       </section>
+
+      {selectedInterestId && (
+        <MainUserComponent interestId={selectedInterestId} />
+      )}
     </div>
   );
 };

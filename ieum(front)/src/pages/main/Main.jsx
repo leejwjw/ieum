@@ -11,7 +11,6 @@ const Main = () => {
       <main>
         <BannerComponent />
         <InterestComponent />
-        <MainUserComponent />
       </main>
       <FooterComponent />
     </>

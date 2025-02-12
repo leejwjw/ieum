@@ -25,13 +25,14 @@ const RoomList = () => {
     fetchRooms();
   }, [userName]);
 
+  console.log(rooms);
   return (
     <div className="bg-white overflow-y-auto">
       <HeaderComponent />
       <AdComponent />
       <main>
         <div className="container mx-auto"></div>
-        <ul className="col-span-full divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto overflow-x-hidden pb-[80px]">
+        <ul className="col-span-full divide-y divide-gray-200 dark:divide-gray-700 overflow-y-auto overflow-x-hidden pb-[10px] border border-gray-300 dark:border-gray-600 rounded-lg mt-5 w-4/5 mx-auto">
           {rooms.map((room) => (
             <li
               key={room.room_ID}
@@ -55,9 +56,9 @@ const RoomList = () => {
                     </p>
                   </div>
                   <div className="inline-flex w-8 h-8 items-center text-base font-semibold text-gray-700 dark:text-white">
-                    <div className="absolute inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full dark:border-blue-900">
+                    {/* <div className="absolute inline-flex items-center justify-center w-8 h-8 text-xs font-bold text-white bg-blue-500 border-2 border-white rounded-full dark:border-blue-900">
                       8
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               </Link>

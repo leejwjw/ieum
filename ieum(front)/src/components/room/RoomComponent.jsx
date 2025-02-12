@@ -28,6 +28,10 @@ const RoomComponent = () => {
   ];
 
   useEffect(() => {
+    const searchBox = document.querySelector("nav.search_box");
+    if (searchBox) {
+      searchBox.style.display = "none";
+    }
     const fetchMessages = async () => {
       try {
         const data = await getMsgs(room_ID);
@@ -97,7 +101,7 @@ const RoomComponent = () => {
     return () => {
       ws.close();
     };
-  }, []); // 컴포넌트가 마운트될 때만 실행되도록 []
+  }, [room_ID]); // 컴포넌트가 마운트될 때만 실행되도록 []
 
   // 메시지가 추가될 때 자동으로 스크롤 맨 아래로 이동
   useEffect(() => {
@@ -127,10 +131,10 @@ const RoomComponent = () => {
       <HeaderComponent />
       <main className="pt-[px] mb-[100px] max-w-screen-xl p-4 relative">
         <div className="flex flex-row justify-center bg-white w-full max-w-5xl mx-auto h-[40rem] mt-[120px]">
-          <div className="flex-shrink-0 w-16 ">
-            <ChatSideBarComponenet />
-          </div>
-          <div className="flex flex-col flex-grow w-full sm:max-w-md md:max-w-lg lg:max-w-2xl rounded-lg ml-6 p-2 relative border-t border-gray-200 shadow-md overflow-hidden">
+          {/* <div className="flex-shrink-0 w-16 "> */}
+          <ChatSideBarComponenet />
+          {/* </div> */}
+          <div className="flex flex-col flex-grow w-full max-w-xl mx-auto rounded-lg  p-2 relative border-t border-gray-200 shadow-md overflow-hidden">
             {/* 메시지 창 */}
             <div
               className="flex flex-col flex-grow p-4 overflow-y-auto"
@@ -155,19 +159,19 @@ const RoomComponent = () => {
                             {msg.reg_date}
                           </span>
                         </div>
-                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 overflow-hidden">
                           <img
-                            src="https://pagedone.io/asset/uploads/1710412177.png"
+                            src="/default-profile.png"
                             alt="User Avatar"
-                            className="w-10 h-11"
+                            className="w-10 h-10 object-cover"
                           />
                         </div>
                       </div>
                     ) : (
                       <div className="flex w-full mt-2 space-x-3 max-w-xs">
-                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 overflow-hidden">
                           <img
-                            src="https://pagedone.io/asset/uploads/1710412177.png"
+                            src="/default-profile.png"
                             alt="User Avatar"
                             className="w-10 h-11"
                           />
@@ -195,17 +199,6 @@ const RoomComponent = () => {
             <div className="absolute bottom-0 left-0 w-full bg-white p-4 border-t border-gray-200 shadow-md flex items-center">
               {/* Language Selector */}
               <div className="relative mr-2 text-xs">
-                <div
-                  className="flex items-center p-2 border border-gray-300 rounded-xl cursor-pointer"
-                  onClick={() => setIsOpen(!isOpen)}
-                >
-                  <span className="mr-2">
-                    {languageOptions.find(
-                      (lang) => lang.code === selectedLanguage
-                    )?.name || "한국어"}
-                  </span>
-                  <span className="text-gray-600">▼</span>
-                </div>
                 {isOpen && (
                   <ul className="absolute z-10 mb-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg bottom-full">
                     {languageOptions.map((lang) => (

@@ -1,6 +1,7 @@
 package com.ieum.service;
 
 import com.ieum.domain.Msg;
+import com.ieum.domain.Participants;
 import com.ieum.domain.Room;
 import com.ieum.domain.RoomType;
 import com.ieum.dto.MsgDTO;
@@ -27,9 +28,25 @@ public class RoomService {
     private final ParticipantRepository participantRepository;
     private final MsgRepository msgRepository;
 
-    public Room createRoom(Room room) {
+    public Room createRoom(String user1, String user2) {
+// 1. 방 생성
+        Room room = new Room();
+        room.setROOM_LIMIT(2L);
+        room.setNAME("대화방");
+        room = roomRepository.save(room);  // 방 저장
 
-        return roomRepository.save(room);
+        // 2. 두 사용자 방에 참가시킴
+        Participants participant1 = new Participants();
+        participant1.setROOM_ID(room.getROOM_ID());
+        participant1.setUSERNAME(user1);
+        participantRepository.save(participant1);
+
+        Participants participant2 = new Participants();
+        participant2.setROOM_ID(room.getROOM_ID());
+        participant2.setUSERNAME(user2);
+        participantRepository.save(participant2);
+
+        return room;  // 생성된 방 반환
     }
     public List<Room> getAllRooms() {
         return roomRepository.findAll();
@@ -54,3 +71,4 @@ public class RoomService {
         }).collect(Collectors.toList());
     }
 }
+

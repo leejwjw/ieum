@@ -6,6 +6,7 @@ import com.ieum.domain.User;
 import com.ieum.domain.UserInterest;
 import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
+import com.ieum.dto.UserDTO;
 import com.ieum.repository.InterestRepository;
 import com.ieum.repository.NationRepository;
 import com.ieum.repository.UserInterestRepository;
@@ -18,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -86,10 +88,48 @@ public class UserService {
     public List<UserInterest> getMyInterests(String userName) {
         return userInterestRepository.getMyInterests(userName);
     }
+    public List<UserDTO> getUserByInterest(Long userInterestId) {
+        List<User> users = userRepository.getUsersByInterestId(userInterestId);
 
-
-    @Transactional
-    public void modifyUser(ModifyDTO modifyDTO) {
-
+        return users.stream().map(user -> new UserDTO(
+                user.getUsername(),
+                user.getNICK_NAME(),
+                user.getKEYWORD(),
+                user.getNATION_NAME(),
+                user.getADDRESS(),
+                user.getLANG(),
+                user.getINTRO(),
+                user.getIS_PUBLIC(),
+                user.getIS_USER(),
+                user.getPHOTO_PATH(),
+                user.getREG_DATE(),
+                user.getSTATUS().name(),
+                user.getINTEREST().stream().map(interest -> interest.getInterest().getInterestId()).collect(Collectors.toList())
+        )).collect(Collectors.toList());
     }
+
+    public List<UserDTO> getUsersBySearchTerm(String searchTerm) {
+        List<User> users = userRepository.findUsersBySearchTerm(searchTerm);
+
+        // User 리스트를 UserDTO 리스트로 변환
+        return users.stream()
+                .map(user -> new UserDTO(
+                        user.getUsername(),
+                        user.getNICK_NAME(),
+                        user.getKEYWORD(),
+                        user.getNATION_NAME(),
+                        user.getADDRESS(),
+                        user.getLANG(),
+                        user.getINTRO(),
+                        user.getIS_PUBLIC(),
+                        user.getIS_USER(),
+                        user.getPHOTO_PATH(),
+                        user.getREG_DATE(),
+                        user.getSTATUS().name(),
+                        null // INTEREST 필드가 필요 없다면 null로 전달
+                ))
+                .collect(Collectors.toList());
+    }
+
+
 }

@@ -1,6 +1,7 @@
 package com.ieum.dto;
 
 import com.ieum.domain.UserInterest;
+import com.ieum.domain.UserStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -45,6 +46,8 @@ public class UserDTO {
 
     public UserDTO(String username, String nickname, String keyword, String nation, String lang, Boolean isPublic, Boolean isUser, String photoPath, LocalDateTime regDate, String status) {
     }
+
+
 
 
     // JWT 를 위한 메서드 : 현재 사용자 정보 Map 타입으로 리턴
