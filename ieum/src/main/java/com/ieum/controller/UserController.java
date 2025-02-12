@@ -7,7 +7,6 @@ import com.ieum.dto.ModifyDTO;
 import com.ieum.dto.MyInfoDTO;
 import com.ieum.dto.UserDTO;
 import com.ieum.service.UserService;
-import com.ieum.util.FileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
@@ -23,7 +22,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final FileUtil fileUtil;
 
 
     @GetMapping("/getNations")
