@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { fetchUsersByInterest } from "../../api/mainApi";
 import { getCookie } from "../../util/cookieUtil";
 import UserInfoModal from "./UserInfoModal"; // 모달 컴포넌트를 임포트합니다.
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 
 const userInfo = getCookie("user");
 
@@ -9,7 +10,7 @@ const MainUserComponent = ({ interestId }) => {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); // 선택된 사용자 상태 추가
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 열림 상태 추가
-
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
   useEffect(() => {
     if (!interestId) return;
 
@@ -33,7 +34,7 @@ const MainUserComponent = ({ interestId }) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
-
+  console.log(users);
   return (
     <div>
       <main>
@@ -51,8 +52,11 @@ const MainUserComponent = ({ interestId }) => {
                       <div className="flex-shrink-0">
                         <img
                           className="w-8 h-8 rounded-full"
-                          src={user.profileImage || "/default-profile.png"}
-                          alt={`${user.name} 프로필`}
+                          src={`${API_SERVER_HOST}/user/view/${user.photo_PATH}`}
+                          alt={`${user.nick_NAME} 프로필`}
+                          onError={(e) => {
+                            e.target.src = defaultPhotoUrl;
+                          }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">

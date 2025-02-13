@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { getCookie } from "../../util/cookieUtil";
 import { getListDetail } from "../../api/roomApi"; // API 파일에서 import
 import { Link } from "react-router-dom";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 
 const userInfo = getCookie("user");
 const userName = userInfo.username;
 
 const ChatSideBarComponenet = () => {
   const [chatList, setChatList] = useState([]);
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
 
   useEffect(() => {
     const loadChatList = async () => {
@@ -21,6 +23,7 @@ const ChatSideBarComponenet = () => {
 
     loadChatList();
   }, []); // 컴포넌트가 처음 렌더링될 때만 실행
+  console.log(chatList);
   return (
     <div className="fixed top-[65px] left-0 z-30 flex flex-col w-[78px] h-[78%] rounded-lg overflow-y-auto bg-sky-100 shadow-sm items-center">
       {chatList.map((chat, index) => (
@@ -31,7 +34,7 @@ const ChatSideBarComponenet = () => {
         >
           <div className="w-full">
             <img
-              src={chat.userAvatar || "/default-profile.png"} // 기본 이미지 경로 사용
+              src={`${API_SERVER_HOST}/user/view/${chat.photoPath}`}
               className="h-[44px] w-[40px] rounded-full ring-4 ring-blue-400 m-1 p-1"
               alt="User Avatar"
             />

@@ -33,6 +33,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -115,7 +116,6 @@ public class UserService {
         return userInterestRepository.getMyInterests(userName);
     }
 
-
     @Transactional
     public void modifyUser(MultipartFile file, ModifyDTO modifyDTO) {
         // username은 ModifyDTO에 포함되어 있음.
@@ -166,6 +166,47 @@ public class UserService {
         }
 
         userRepository.save(user);
+    }
+    public List<UserDTO> getUserByInterest(Long userInterestId) {
+        List<User> users = userRepository.getUsersByInterestId(userInterestId);
+
+        return users.stream().map(user -> new UserDTO(
+                user.getUsername(),
+                user.getNICK_NAME(),
+                user.getKEYWORD(),
+                user.getNATION_NAME(),
+                user.getADDRESS(),
+                user.getLANG(),
+                user.getINTRO(),
+                user.getIS_PUBLIC(),
+                user.getIS_USER(),
+                user.getPHOTO_PATH(),
+                user.getREG_DATE(),
+                user.getSTATUS().name(),
+                user.getINTEREST().stream().map(interest -> interest.getInterest().getInterestId()).collect(Collectors.toList())
+        )).collect(Collectors.toList());
+    }
+    public List<UserDTO> getUsersBySearchTerm(String searchTerm) {
+        List<User> users = userRepository.findUsersBySearchTerm(searchTerm);
+
+        // User 리스트를 UserDTO 리스트로 변환
+        return users.stream()
+                .map(user -> new UserDTO(
+                        user.getUsername(),
+                        user.getNICK_NAME(),
+                        user.getKEYWORD(),
+                        user.getNATION_NAME(),
+                        user.getADDRESS(),
+                        user.getLANG(),
+                        user.getINTRO(),
+                        user.getIS_PUBLIC(),
+                        user.getIS_USER(),
+                        user.getPHOTO_PATH(),
+                        user.getREG_DATE(),
+                        user.getSTATUS().name(),
+                        null // INTEREST 필드가 필요 없다면 null로 전달
+                ))
+                .collect(Collectors.toList());
     }
 
     private String saveEncryptedFile(MultipartFile file) {

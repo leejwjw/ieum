@@ -24,7 +24,7 @@ const InterestComponent = () => {
 
     loadUserInterests();
   }, [userName]); // userName이 변경될 때 실행
-  console.log(selectedInterestId);
+  console.log(interests);
   return (
     <div className="container mx-auto">
       <section>

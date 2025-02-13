@@ -4,13 +4,14 @@ import { fetchSearchResults } from "../../api/mainApi";
 import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../../components/common/FooterComponent";
 import UserInfoModal from "../../components/common/UserInfoModal";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 
 const SearchResultPage = () => {
   const { searchTerm } = useParams();
   const [results, setResults] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null); // 선택된 사용자 상태 추가
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
   useEffect(() => {
     if (!searchTerm) return;
 
@@ -51,7 +52,7 @@ const SearchResultPage = () => {
                     <div className="flex-shrink-0">
                       <img
                         className="w-8 h-8 rounded-full"
-                        src={user.photoPath || "/default-profile.png"} // 프로필 이미지 경로 수정
+                        src={`${API_SERVER_HOST}/user/view/${user.photo_PATH}`} // 프로필 이미지 경로 수정
                         alt={`${user.nick_NAME} 프로필`}
                       />
                     </div>

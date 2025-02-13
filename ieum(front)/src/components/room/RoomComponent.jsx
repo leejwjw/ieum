@@ -6,9 +6,11 @@ import HeaderComponent from "../../components/common/HeaderComponent";
 import FooterComponent from "../common/FooterComponent";
 import ChatSideBarComponenet from "./ChatSideBarComponenet";
 import { getCookie } from "../../util/cookieUtil";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
+import axios from "axios";
 
 const userInfo = getCookie("user");
-console.log(userInfo.lang);
+console.log(userInfo.photo_PATH);
 const userName = userInfo.username;
 
 const RoomComponent = () => {
@@ -19,6 +21,7 @@ const RoomComponent = () => {
   const [selectedLanguage, setSelectedLanguage] = useState("ko");
   const messagesEndRef = useRef(null); // 마지막 메시지를 가리킬 ref
   const [isOpen, setIsOpen] = useState(false);
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
 
   const languageOptions = [
     { code: "ko", name: "한국어" },
@@ -73,13 +76,30 @@ const RoomComponent = () => {
       }
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {
       try {
         const messageData = JSON.parse(event.data);
 
         // 🚨 메시지에 번역된 언어(userInfo.lang)가 있으면 그것을 사용
         messageData.content =
-          messageData.translatedMessage?.[userInfo.lang] || messageData.content; // 선택된 언어가 없으면 기본 content 사용
+          messageData.translatedMessage?.[userInfo.lang] || messageData.content;
+
+        // 보낸 사람의 username으로 회원 정보 조회
+        try {
+          const response = await axios.get(
+            `${API_SERVER_HOST}/user/${messageData.username}/getUserInfo`,
+            {
+              headers: {
+                Authorization: `Bearer ${userInfo.accessToken}`,
+              },
+            }
+          );
+          messageData.photo_path =
+            response.data.photo_PATH || "/default-profile.png";
+        } catch (err) {
+          console.error("사용자 정보를 가져오는데 실패했습니다.", err);
+          messageData.photo_path = "/default-profile.png"; // 기본 이미지 설정
+        }
 
         // 메시지 상태 업데이트
         setMessages((prevMessages) => [...prevMessages, messageData]);
@@ -87,6 +107,21 @@ const RoomComponent = () => {
         console.error("메시지 오류:", error);
       }
     };
+
+    //   const APIUserInfo = async () => {
+    //     try {
+    //       const response = await axios.get(
+    //         `${API_SERVER_HOST}/user/${username}/getUserInfo`,
+    //         header
+    //       );
+    //       console.log("API Response:", response.data);
+    //       setOldUser(response.data);
+    //     } catch (err) {
+    //       console.error("사용자 정보를 가져오는데 실패했습니다.", err);
+    //     }
+    //   };
+    //   APIUserInfo();
+    // }, []);
 
     ws.onclose = () => {
       console.log("[close] 커넥션 종료");
@@ -161,7 +196,7 @@ const RoomComponent = () => {
                         </div>
                         <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 overflow-hidden">
                           <img
-                            src="/default-profile.png"
+                            src={`${API_SERVER_HOST}/user/view/${msg.photo_path}`}
                             alt="User Avatar"
                             className="w-10 h-10 object-cover"
                           />
@@ -171,9 +206,9 @@ const RoomComponent = () => {
                       <div className="flex w-full mt-2 space-x-3 max-w-xs">
                         <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-100 overflow-hidden">
                           <img
-                            src="/default-profile.png"
+                            src={`${API_SERVER_HOST}/user/view/${msg.photo_path}`}
                             alt="User Avatar"
-                            className="w-10 h-11"
+                            className="w-10 h-10 object-cover"
                           />
                         </div>
                         <div>

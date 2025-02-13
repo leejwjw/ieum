@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
 import { getCookie } from "../../util/cookieUtil";
 import SearchComponent from "./SearchComponent";
+import { API_SERVER_HOST } from "../../api/kakaoApi";
 const userInfo = getCookie("user");
 
 const HeaderComponent = () => {
+  const defaultPhotoUrl = `${API_SERVER_HOST}/user/view/default.jpg`;
   return (
     <header>
       <nav className="bg-white dark:bg-gray-900 fixed w-full z-10 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -36,7 +38,16 @@ const HeaderComponent = () => {
             <button onClick={handleCreateOpenRoom}>CREATE OPENCHAT !!</button>
           </div> */}
           <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-            <Link to={`/setting`}>
+            <Link to={`/setting`} className="flex items-center gap-2">
+              {console.log(userInfo)}
+              <img
+                className="w-[30px] h-[30px] rounded-full"
+                src={`${API_SERVER_HOST}/user/view/${userInfo.photoPath}`}
+                alt="Uploaded Preview"
+                onError={(e) => {
+                  e.target.src = defaultPhotoUrl;
+                }}
+              />
               <p>{userInfo.nickname ? userInfo.nickname : "설정"}</p>
             </Link>
           </div>
