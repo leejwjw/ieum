@@ -10,6 +10,7 @@ import { API_SERVER_HOST } from "../../api/kakaoApi";
 import { getCookie } from "../../util/cookieUtil";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import HeaderComponent from "../../components/common/HeaderComponent";
 
 const CookieUserInfo = getCookie("user");
 const username = CookieUserInfo.username;
@@ -56,6 +57,10 @@ const Modify = () => {
   };
 
   useEffect(() => {
+    const searchBox = document.querySelector("nav.search_box");
+    if (searchBox) {
+      searchBox.style.display = "none";
+    }
     // 사용자 정보를 가져오는 함수
     const APIUserInfo = async () => {
       try {
@@ -179,6 +184,7 @@ const Modify = () => {
 
   return (
     <>
+      <HeaderComponent />
       {result && <ModifyModal callbackFn={closeModal} />}
       <div className="bg-white">
         <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-10 lg:px-8">
@@ -198,7 +204,7 @@ const Modify = () => {
                 <div className="border-b border-gray-900/10 pb-12">
                   <PhotoComponent
                     olduser={olduser}
-                    header = {header}
+                    header={header}
                     onPhotoChange={handlePhotoChange}
                   />
                   <ToggleComponent
