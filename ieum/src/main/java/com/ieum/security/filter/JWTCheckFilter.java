@@ -15,10 +15,28 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Map;
 
 @Slf4j
 public class JWTCheckFilter extends OncePerRequestFilter {
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+
+        // preflight 제외
+        if(request.getMethod().equals("OPTIONS")){
+            return true;
+        }
+
+        String requestURI = request.getRequestURI();
+
+        // 이미지 조회 경로 체크 제외
+        if(requestURI.startsWith("/user/view/")) {
+            return true;
+        }
+        return false;
+    }
+
     // 필터링 메서드 : 오버라이딩 필수
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -29,7 +47,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        if (path.equals("/getNations")) {
+
+        if (path.equals("/ws/chat")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -49,6 +68,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 String nickname = (String) claims.get("nickname");
                 String keyword = (String) claims.get("keyword");
                 String nation =  (String) claims.get("nation");
+                String lang =  (String) claims.get("lang");
                 Boolean isPublic = (Boolean) claims.get("isPublic");
                 Boolean isUser = (Boolean) claims.get("isUser");
                 String photoPath = (String) claims.get("photo_path");
@@ -57,7 +77,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
                 // AccessToken에 저장된 사용자 정보를 꺼내서 UserDetails타입인 UserDTO에 정보 담아 생성
-                UserDTO userDTO = new UserDTO(username, nickname, keyword, nation, isPublic, isUser, photoPath, regDate, status);
+                UserDTO userDTO = new UserDTO(username, nickname, keyword, nation, lang, isPublic, isUser, photoPath, regDate, status);
                 log.info("JWTCheckFilter - AccessToken to userDTO : {}", userDTO);
 
                 // Authentication 객체 생성 (시큐리티 인증)

@@ -1,10 +1,33 @@
 import { useState } from "react";
 
-const languages = ["한국어", "영어", "일본어"];
+const languageOptions = [
+  { code: "kr", name: "한국어" },
+  { code: "en", name: "영어" },
+  { code: "ja", name: "일본어" },
+  { code: "ch", name: "중국어" },
+];
 
-const LangComponent = () => {
-  const [selected, setSelected] = useState(languages[0]);
+const LangComponent = ({ olduser, onLangChange }) => {
+  const [selected, setSelected] = useState("ko");
   const [isOpen, setIsOpen] = useState(false);
+  {
+    isOpen && (
+      <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
+        {["한국어", "영어", "일본어"].map((lang) => (
+          <li
+            key={lang}
+            className="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-gray-900"
+            onClick={() => {
+              setSelected(lang);
+              setIsOpen(false);
+            }}
+          >
+            {lang}
+          </li>
+        ))}
+      </ul>
+    );
+  }
   return (
     <div className="sm:col-span-2">
       <label
@@ -20,7 +43,11 @@ const LangComponent = () => {
             className="w-full appearance-none rounded-md bg-white py-2 pl-3 pr-2 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm flex justify-between items-center"
             onClick={() => setIsOpen(!isOpen)}
           >
-            {selected}
+            <span className="mr-2">
+              {languageOptions.find((lang) => lang.code === selected)?.name ||
+                "한국어"}
+              {/* 시간나면 default 언어 잡기 */}
+            </span>
             <svg
               className=" w-5 h-5 text-gray-500"
               xmlns="http://www.w3.org/2000/svg"
@@ -39,16 +66,17 @@ const LangComponent = () => {
           {/* Custom Dropdown */}
           {isOpen && (
             <ul className="absolute z-10 mt-1 w-full bg-white border border-gray-300 rounded-lg shadow-lg">
-              {["한국어", "영어", "일본어"].map((lang) => (
+              {languageOptions.map((lang) => (
                 <li
-                  key={lang}
+                  key={lang.code}
                   className="px-4 py-2 hover:bg-indigo-100 cursor-pointer text-gray-900"
                   onClick={() => {
-                    setSelected(lang);
+                    onLangChange(lang.code);
+                    setSelected(lang.code);
                     setIsOpen(false);
                   }}
                 >
-                  {lang}
+                  {lang.name}
                 </li>
               ))}
             </ul>

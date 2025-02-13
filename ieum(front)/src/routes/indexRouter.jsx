@@ -1,22 +1,26 @@
 import { lazy, Suspense } from "react";
 import { useRoutes } from "react-router-dom";
 import LoadingPage from "../components/common/LoadingPage";
-import RoomListPage from "../pages/room/RoomListPage";
-import RoomComponent from "../components/room/RoomComponent";
+import PrivateRoute from "../components/common/PrivateRoute";
 
 // 지연 로딩 처리
 const KakakoRedirect = lazy(() => import("../pages/user/KakaoRedirectPage"));
 const Home = lazy(() => import("../pages/main/Home"));
 const Main = lazy(() => import("../pages/main/Main"));
-const Info = lazy(() => import("../pages/main/Info"));
 const MyInfo = lazy(() => import("../pages/main/MyInfo"));
+const Modify = lazy(() => import("../pages/main/Modify"));
+const Setting = lazy(() => import("../pages/main/Setting"));
+const Faq = lazy(() => import("../pages/main/Faq"));
+const RoomComponent = lazy(() => import("../components/room/RoomComponent"));
+const RoomListPage = lazy(() => import("../pages/room/RoomListPage"));
+const SearchResultPage = lazy(() => import("../pages/main/SearchResultPage"));
 
 const Router = () => {
   return useRoutes([
     {
       path: "/home",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<LoadingPage />}>
           <Home />
         </Suspense>
       ),
@@ -24,17 +28,21 @@ const Router = () => {
     {
       path: "/main",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Main />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Main />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
-      path: "/info",
+      path: "/myinfo",
       element: (
-        <Suspense fallback={<LoadingPage />}>
-          <Info />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<div>Loading...</div>}>
+            <MyInfo />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
@@ -48,25 +56,71 @@ const Router = () => {
     {
       path: "/roomList",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <RoomListPage />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <RoomListPage />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/myinfo",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <MyInfo />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <MyInfo />
+          </Suspense>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/modify",
+      element: (
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Modify />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
     {
       path: "/roomList/room/:room_ID",
       element: (
-        <Suspense fallback={<div>Loading...</div>}>
-          <RoomComponent />
-        </Suspense>
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <RoomComponent />
+          </Suspense>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/setting",
+      element: (
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Setting />
+          </Suspense>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/faq",
+      element: (
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <Faq />
+          </Suspense>
+        </PrivateRoute>
+      ),
+    },
+    {
+      path: "/user/search/:searchTerm",
+      element: (
+        <PrivateRoute>
+          <Suspense fallback={<LoadingPage />}>
+            <SearchResultPage />
+          </Suspense>
+        </PrivateRoute>
       ),
     },
   ]);

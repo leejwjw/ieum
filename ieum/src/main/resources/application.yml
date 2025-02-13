@@ -31,7 +31,9 @@ kakao:
     auth-code-path: "https://kauth.kakao.com/oauth/authorize"
     access-token-url: "https://kauth.kakao.com/oauth/token"
 
-ieum.upload.path: upload
+ieum:
+  upload:
+    path: upload
 
 # log
 logging:

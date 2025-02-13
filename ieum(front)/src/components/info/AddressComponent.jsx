@@ -1,13 +1,16 @@
 import { useState } from "react";
 import DaumPostcode from "react-daum-postcode";
 
-const AddressComponent = () => {
+const AddressComponent = ({ olduser, onAddressChange }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [address, setAddress] = useState("");
+  const [IsAddressClicked, setIsAddressClicked] = useState(false);
 
   const handleComplete = (data) => {
     setAddress(data.address); // 선택한 주소 저장
+    console.log("address 컴포넌트에서 선택한 주소", data.address);
     setIsOpen(false); // 모달 닫기
+    onAddressChange(data.address);
   };
 
   return (
@@ -20,13 +23,21 @@ const AddressComponent = () => {
       </label>
       <div className="mt-2 flex gap-2">
         <input
+          // 클릭될 때 작동
+          onFocus={() => {
+            setIsAddressClicked(true);
+          }}
+          // 클릭되어 있지 않을 때 작동(input 이외의 영역이 클릭되었을 때)
+          onBlur={() => {
+            setIsAddressClicked(false);
+          }}
+          placeholder={IsAddressClicked === true ? "" : olduser.address}
           type="text"
           id="address"
           name="address"
           value={address}
           readOnly
           className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm"
-          placeholder="주소를 검색하세요"
         />
         <button
           type="button"

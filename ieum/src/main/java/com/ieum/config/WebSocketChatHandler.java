@@ -1,6 +1,8 @@
 package com.ieum.config;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ieum.dto.MsgDTO;
 import com.ieum.service.ChatService;
+import com.ieum.service.PapagoTranslationService;
 import com.ieum.util.Util;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +16,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+//
+
+
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class WebSocketChatHandler extends TextWebSocketHandler {
-    private final ChatService chatService;
+    private final ObjectMapper objectMapper = new ObjectMapper(); // ObjectMapper 인스턴스 추가
 
+    private final ChatService chatService;
+    private final PapagoTranslationService papagoTranslationService;
     // roomId를 키로 세션을 관리
     private final Map<Long, Set<WebSocketSession>> roomSessions = new HashMap<>();
 
@@ -37,26 +44,50 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         log.info("받은 메시지!!!: {}", payload);
 
         MsgDTO msgDTO = Util.Chat.resolvePayload(payload);
-        Long roomId = msgDTO.getROOM_ID();  // 메시지에서 roomId를 추출
+        Long roomId = msgDTO.getROOM_ID();
+        String content = msgDTO.getCONTENT();
+        String selectedLanguage = msgDTO.getSelectedLanguage(); // 사용자가 선택한 언어
 
-        // 세션에 roomID 저장 속성
+        // 세션에 roomID 저장
         session.getAttributes().put("roomId", roomId);
 
-        // DB저장 및 해당 채팅방 세션에 메시지 보내깅
+        // 번역된 메시지를 저장할 맵
+        Map<String, String> translatedMessages = new HashMap<>();
+        translatedMessages.put("original", content); // 원본 메시지 저장
+
+        // 선택된 언어에 맞춰 번역 (Papago API 호출)
+        String[] languages = new String[]{"ko", "en", "ch", "ja"}; // 예시로 한국어, 영어, 중국어로 번역
+        for (String lang : languages) {
+            if (!lang.equals(selectedLanguage)) { // 원본 언어와 다를 때만 번역
+                if (lang.equals("ch")) {
+                    lang = "zh-CN";
+                }
+                String translatedText = papagoTranslationService.translateText(content, lang);
+                translatedMessages.put(lang, translatedText);
+            }
+        }
+
+        // 번역된 메시지를 MsgDTO에 추가
+        msgDTO.setTranslatedMessage(translatedMessages);
+
+        // 메시지를 DB에 저장 (번역된 내용 포함)
         chatService.handleAction(roomId, session, msgDTO);
 
-        // roomId에 속한 세션들에만 메시지 보내깅
+        // 해당 채팅방에만 메시지 전송
         roomSessions.computeIfAbsent(roomId, k -> new CopyOnWriteArraySet<>()).add(session);
 
         Set<WebSocketSession> sessionsInRoom = roomSessions.get(roomId);
-        //브로드캐스팅
         if (sessionsInRoom != null) {
             for (WebSocketSession webSocketSession : sessionsInRoom) {
-                if (webSocketSession.isOpen() ) {
+                if (webSocketSession.isOpen()) {
                     try {
-                        webSocketSession.sendMessage(new TextMessage(payload));  // 해당 채팅방에만 메시지 전송
+
+                        String jsonMessage = objectMapper.writeValueAsString(msgDTO);
+                        log.info("jsonMessage *** : {}", jsonMessage);
+                        webSocketSession.sendMessage(new TextMessage(jsonMessage));
+
                     } catch (Exception e) {
-                        log.error("Error sending message to session: {}", webSocketSession.getId(), e);
+                        log.error("메시지 전송 오류: {}", webSocketSession.getId(), e);
                     }
                 }
             }

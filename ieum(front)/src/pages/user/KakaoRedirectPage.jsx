@@ -33,7 +33,7 @@ const KakaoRedirectPage = () => {
           moveToPath("/main");
         } else {
           // 처음 소셜회원으로 로그인(가입)인 경우
-          moveToPath("/info");
+          moveToPath("/myinfo");
         }
       });
     });
@@ -42,7 +42,7 @@ const KakaoRedirectPage = () => {
   return (
     <div>
       <div> Kakao Login Redirect Page </div>
-      <div>{authCode}</div>
+      {/* <div>{authCode}</div> */}
     </div>
   );
 };

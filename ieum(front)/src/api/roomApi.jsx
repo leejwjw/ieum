@@ -1,8 +1,30 @@
 import axios from "axios";
+import { getCookie } from "../util/cookieUtil";
 
-export const getList = async () => {
+const userInfo = getCookie("user");
+
+const userToken = userInfo.accessToken;
+console.log("userJWTToken: {}", userToken);
+const header = { headers: { Authorization: `Bearer ${userToken}` } };
+
+export const getList = async (userName) => {
   try {
-    const result = await axios.get(`http://localhost:8080/room/list`);
+    const result = await axios.get(
+      `http://localhost:8080/room/list/${userName}`,
+      header
+    );
+    return result.data;
+  } catch (error) {
+    console.error("getList ERROR ! :", error);
+    throw error;
+  }
+};
+export const getListDetail = async (userName) => {
+  try {
+    const result = await axios.get(
+      `http://localhost:8080/room/listDetail/${userName}`,
+      header
+    );
     return result.data;
   } catch (error) {
     console.error("getList ERROR ! :", error);
@@ -11,11 +33,10 @@ export const getList = async () => {
 };
 
 export const getMsgs = async (room_ID) => {
-  console.log("id ++++++++" + room_ID);
-
   try {
     const result = await axios.get(
-      `http://localhost:8080/room/msgs/${room_ID}`
+      `http://localhost:8080/room/msgs/${room_ID}`,
+      header
     );
     console.log(result.data);
     return result.data;
@@ -24,22 +45,19 @@ export const getMsgs = async (room_ID) => {
     throw error;
   }
 };
-export const createRoom = async (name) => {
-  const result = await axios.post(`http://localhost:8080/room/create`, {
-    name,
-  });
-  return result.data;
-};
-export const createOpenRoom = async (roomData) => {
-  console.log(roomData);
+export const createRoom = async ({ user1, user2 }) => {
   try {
     const result = await axios.post(
-      "http://localhost:8080/room/createOpen",
-      roomData
+      "http://localhost:8080/room/create",
+      {
+        user1,
+        user2,
+      },
+      header
     );
     return result.data;
   } catch (error) {
-    console.error("오픈 채팅방 생성 오류:", error);
+    console.error("채팅방 생성 오류:", error);
     throw error;
   }
 };

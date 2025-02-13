@@ -12,7 +12,9 @@ export const setCookie = (name, value, days) => {
 
 // 쿠키 조회 함수
 export const getCookie = (name) => {
-  return cookies.get(name); // 쿠키 값 반환
+  const cookie = cookies.get(name);
+  console.log(`쿠키 값: ${cookie}`); // 반환 값 확인
+  return cookie;
 };
 
 // 쿠키 삭제 함수

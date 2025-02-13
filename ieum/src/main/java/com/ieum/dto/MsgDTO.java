@@ -5,6 +5,7 @@ import lombok.*;
 
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -23,10 +24,15 @@ public class MsgDTO {
 
     private Long MSG_ID;
     private Long ROOM_ID;
-    private Long MY_EMO_ID;
     private String USERNAME;
     private String CONTENT;
+    private String KO;
+    private String EN;
+    private String JA;
+    private String CH;
     private Status STATUS;
+    private String selectedLanguage;
+    private Map<String, String> translatedMessage;
 
     private String reg_date;
 
