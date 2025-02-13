@@ -17,8 +17,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 //
-
-
 @Slf4j
 @RequiredArgsConstructor
 @Component
@@ -29,14 +27,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
     private final PapagoTranslationService papagoTranslationService;
     // roomId를 키로 세션을 관리
     private final Map<Long, Set<WebSocketSession>> roomSessions = new HashMap<>();
-
-    //연결초기관리
-//    @Override
-//    public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-//
-//        log.info("New session connected: {}", session.getId());
-//
-//    }
 
     @Override
     protected void handleTextMessage(WebSocketSession session, TextMessage message) {
@@ -66,7 +56,6 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
                 translatedMessages.put(lang, translatedText);
             }
         }
-
         // 번역된 메시지를 MsgDTO에 추가
         msgDTO.setTranslatedMessage(translatedMessages);
 
@@ -94,19 +83,4 @@ public class WebSocketChatHandler extends TextWebSocketHandler {
         }
     }
 
-//    @Override
-//    public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-//        Long roomId = (Long) session.getAttributes().get("roomId");
-//
-//        // 해당 roomId에 해당하는 세션 목록에서 세션 제거
-//        Set<WebSocketSession> sessionsInRoom = roomSessions.get(roomId);
-//        if (sessionsInRoom != null) {
-//            sessionsInRoom.remove(session);
-//            if (sessionsInRoom.isEmpty()) {
-//                roomSessions.remove(roomId);  // 해당 roomId의 세션 목록이 비었으면 roomSessions에서 제거
-//            }
-//        }
-//
-//        log.info("Session disconnected from room {}: {}", roomId, session.getId());
-//    }
 }
