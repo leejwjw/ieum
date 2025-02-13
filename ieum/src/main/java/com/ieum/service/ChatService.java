@@ -55,7 +55,6 @@ public class ChatService {
         ChatRoom chatRoom = findChatRoomById(roomId);
 
         // 사용자가 채팅방에 입장할 때
-
         if (isEnterRoom(MsgDTO)) {
             chatRoom.join(roomId, session);  // 세션을 채팅방에 추가
             MsgDTO.setCONTENT("채팅방이 개설되었습니다.");  // 입장 메시지 설정
@@ -79,6 +78,8 @@ public class ChatService {
 
 
         log.info("MEssageTTTTT {}", chatMsg.getUSERNAME());
+
+
         // 기본 Msg 객체 생성
         Msg msg = new Msg();
         msg.setROOM_ID(chatMsg.getROOM_ID());
